@@ -8,8 +8,9 @@ Author: VibeThemes
 Author URI: http://www.vibethemes.com
 License: GPL2
 */
+
 /*
-Copyright 2014  VibeThemes  (email : vibethemes@gmail.com)
+Copyright GPLv2
 
 wplms_customizer program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License, version 2, as 
