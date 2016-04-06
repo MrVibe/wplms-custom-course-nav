@@ -7,6 +7,7 @@ Version: 1.0
 Author: VibeThemes
 Author URI: http://www.vibethemes.com
 License: GPL2
+Text Domain : wplms-ccn
 */
 
 /*
@@ -41,24 +42,7 @@ if(class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
 }
 
 
-add_action('wp_head','wplms_course_custom_nav_scripts');
 
-add_action('wp_enqueue_scripts','wplms_course_custom_nav_cssjs');
-
-/**
- * Objective: Register & Enqueue your Custom scripts
- * Developer notes:
- * Hook you custom scripts required for the plugin here.
- */
-function wplms_course_custom_nav_scripts(){
-    wp_enqueue_style( 'wplms-course-custom-nav-css', plugins_url( 'css/custom.css' , __FILE__ ));
-    wp_enqueue_script( 'wplms-course-custom-nav-js', plugins_url( 'js/custom.js' , __FILE__ ));
-}
-
-function wplms_course_custom_nav_cssjs(){
-    wp_enqueue_style( 'wplms-course-custom-nav-css', plugins_url( 'css/custom.css' , __FILE__ ));
-    wp_enqueue_script( 'wplms-course-custom-nav-js', plugins_url( 'js/custom.js' , __FILE__ ));
-}
 
 
 
