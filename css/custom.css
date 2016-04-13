@@ -32,8 +32,21 @@
     font-weight: bold;
     line-height: 1.8;
     font-size: 14px;
+    margin-left: 14px;
 }
-h2.section_fields{width:713px;font-size:20px;}
-h2.section_fields span input{margin-left:35px;}
+h2.section {
+    width: 713px;
+    padding: 14px;
+    background: #FFF;
+    font-size: 20px;
+    border: rgba(79, 121, 125, 0.3) 1px solid;
+}
+h2.section span input{margin-left:35px;}
+.section span{float:right;}
+.section span input{margin-left: 50px;}
 .section_fields span{float:right;}
 .section_fields span input{margin-left: 50px;}
+a.edit_section {
+    line-height: 1.5em;
+    margin: 0px 10px;
+}

@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 include_once 'classes/course_custom_nav_class.php';
-
+include_once 'classes/init.php';
 
 
 if(class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))

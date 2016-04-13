@@ -14,11 +14,12 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
             return self::$instance;
         }
         public function __construct(){
-            $this->custom_sections = get_option('custom_course_sections');
+            
             add_action('admin_menu',array($this,'init_wplms_course_nav_settings'));
 
             add_action('admin_enqueue_scripts',array($this,'enqueue_custom_js'));
             add_action('wp_ajax_save_custom_course_sections',array($this,'save_custom_course_sections'));
+            add_action('wp_ajax_save_custom_course_creation',array($this,'save_custom_course_creation'));
         }
 
         function enqueue_custom_js($hook){
@@ -33,6 +34,8 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
         }
         function init_wplms_course_nav_settings(){
             add_submenu_page('lms',__('Course custom nav settings','wplms-ccn'),__('Course Navigation','wplms-ccn'),'manage_options','wplms-course-custom-nav',array($this,'settings'));  
+            $this->custom_sections = get_option('custom_course_sections');
+            $this->course_creation = get_option('custom_course_creation');
         }
         // END public function __construct
         public function activate(){
@@ -91,24 +94,31 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
         function course_creation(){
           $fields = WPLMS_Front_End_Fields::init();
           $settings = $fields->tabs();
+          $i=0;
           foreach ($settings as $key => $value) {
+            
             if($key != 'create_course'){
-                echo '<h2 class="section_fields">'.$value['title'].'<span><input type="radio" id="'.$key.'yes" name="'.$key.'" /><label for="'.$key.'yes">'.__('Show','wplms-ccn').'</label><input type="radio" name="'.$key.'" id="'.$key.'no" /><label for="'.$key.'no">'.__('Hide','wplms-ccn').'</label></span></h2><ul>';
+                echo '<div class="section_wrapper">';
+                echo '<h2 class="section" id="'.$key.'">'.$value['title'].'<span><input type="radio" value="1" id="'.$key.'yes" class="course_section" name="'.$key.'" '.((!isset($this->course_creation[$i]['visibility']) || $this->course_creation[$i]['visibility'])?'CHECKED':'').' /><label for="'.$key.'yes">'.__('Show','wplms-ccn').'</label><input type="radio" value="0" name="'.$key.'" class="course_section" id="'.$key.'no" '.((empty($this->course_creation[$i]['visibility']) && isset($this->course_creation[$i]['visibility']))?'CHECKED':'').' /><label for="'.$key.'no">'.__('Hide','wplms-ccn').'</label></span></h2><ul id="'.$key.'" >';
 
-                foreach($value['fields'] as $field){
+                foreach($value['fields'] as $j=>$field){ 
                     if(!in_array($field['type'],array('button'))){
-                    echo '<li class="section_fields">'.$field['label'].'<span><input type="radio" id="'.$field['id'].'yes" name="'.$field['id'].'" /><label for="'.$field['id'].'yes">'.__('Show','wplms-ccn').'</label><input type="radio" name="'.$field['id'].'" id="'.$field['id'].'no" /><label for="'.$field['id'].'no">'.__('Hide','wplms-ccn').'</label></span>'.'</li>';
+                    echo '<li class="section_fields" id="'.$field['id'].'">'.$field['label'].'<span><input type="radio" class="course_field_label" value="1" id="'.$field['id'].'yes" name="'.$field['id'].'" '.((!isset($this->course_creation[$i]['fields'][$j]['visibility']) || $this->course_creation[$i]['fields'][$j]['visibility'])?'CHECKED':'').' /><label for="'.$field['id'].'yes">'.__('Show','wplms-ccn').'</label><input type="radio" class="course_field_label" value="0" name="'.$field['id'].'" id="'.$field['id'].'no" '.((empty($this->course_creation[$i]['fields'][$j]['visibility']) && isset($this->course_creation[$i]['fields'][$j]['visibility']))?'CHECKED':'').'/><label for="'.$field['id'].'no">'.__('Hide','wplms-ccn').'</label></span>'.'</li>';
                     }
                 }
                 echo '</ul>';
+                echo '</div>';
+                $i++;
             }
+            
           }
+           wp_nonce_field('vibe_security','vibe_security'); 
           echo '<a id="save_course_creation_settings" class="button-primary">'.__('Save Settings','wplms-ccn').'</a>';
           
         }
 
         function generate_form($tab,$settings=array()){
-            echo '<form method="post">
+            echo '<form method="post" id="course_custom_sections_form">
                     <table class="form-table">';
             wp_nonce_field('save_settings','_wpnonce');   
             echo '<ul class="save-settings">';
@@ -150,8 +160,14 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
                         }else{
                             echo '<ul id="course_custom_sections">';
                             foreach($this->custom_sections as $section){
-                                echo '<li><h4><strong>'.$section->title.'</strong><span>'.$section->description.'</span><a class="remove_section dashicons dashicons-no-alt"></a></h4>'.
+                                echo '<li><h4>
+                                <strong>'.$section->title.'</strong>
+                                <span>'.$section->description.'</span>
+                                <a class="remove_section dashicons dashicons-no-alt"></a>
+                                <a class="edit_section">EDIT</a>
+                                </h4>'.
                                 '<input type="hidden" class="section_courses" value="'.$section->courses.'">'.
+                                '<input type="hidden" value="'.$section->slug.'" class="custom_course_section_slug">'.
                                 '<input type="hidden" class="section_all_courses" value="'.$section->all_courses.'">'.
                                 '<input type="hidden" class="section_visibility" value="'.$section->visibility.'"></li>';
                             }
@@ -166,6 +182,10 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
                                         <label><?php _e('Add Section Title','wplms-ccn');?></label>
                                         <span><input type="text" class="custom_section_title" placeholder="<?php _e('Add Section Title','wplms-ccn'); ?>" /></span>
                                     </li>    
+                                    <li>
+                                        <label><?php _e('Add Section Slug','wplms-ccn');?></label>
+                                        <span><input type="text" class="custom_section_slug" placeholder="<?php _e('Add Section Slug','wplms-ccn'); ?>" /></span>
+                                    </li>
                                     <li>
                                         <label><?php _e('Add Section Desciption','wplms-ccn');?></label>
                                         <span><textarea name="description" class="custom_section_description" placeholder="<?php _e('Add Section description','wplms-ccn'); ?>"></textarea></span>
@@ -198,7 +218,8 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
                     default:
                     echo '<th scope="row" class="titledesc">'.$setting['label'].'</th>';
                     echo '<td class="forminp"><input type="text" name="'.$setting['name'].'" value="'.(isset($this->settings[$setting['name']])?$this->settings[$setting['name']]:(isset($setting['std'])?$setting['std']:'')).'" />';
-                    echo '<span>'.$setting['desc'].'</span></td>';
+                    echo '<span>'.$setting['desc'].'</span></td>
+                    <td><a class="edit_section" >EDIT</a></td>';
                     break;
                 }
             }
@@ -213,7 +234,23 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
                 die();
             }
             $sections = json_decode(stripslashes($_POST['sections']));
+     
+            //$custom_sections = $this->objToArray($sections,$custom_sections);
             update_option('custom_course_sections',$sections);
+            //print_r(get_option('custom_course_creation'));
+            _e('Sections saved','wplms-ccn');
+            die();
+        }
+        function save_custom_course_creation(){
+            if ( !isset($_POST['security']) || !isset($_POST['security']) || !wp_verify_nonce($_POST['security'],'vibe_security') ){
+                _e('Security check Failed. Contact Administrator.','wplms-ccn');
+                die();
+            }
+            $sections = json_decode(stripslashes($_POST['course_creation']));
+     
+            $custom_sections = $this->objToArray($sections,$custom_sections);
+            update_option('custom_course_creation',$custom_sections);
+            //print_r(get_option('custom_course_creation'));
             _e('Sections saved','wplms-ccn');
             die();
         }
@@ -239,7 +276,26 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
         }
 
         // ADD custom Code in clas
+        function objToArray($obj, &$arr){
+            if(!is_object($obj) && !is_array($obj)){
+                $arr = $obj;
+                return $arr;
+            }
 
+            foreach ($obj as $key => $value)
+            {
+                if (!empty($value))
+                {
+                    $arr[$key] = array();
+                    $this->objToArray($value, $arr[$key]);
+                }
+                else
+                {
+                    $arr[$key] = $value;
+                }
+            }
+            return $arr;
+        }
     } 
 } 
 
