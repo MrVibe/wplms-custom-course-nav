@@ -160,16 +160,55 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
                         }else{
                             echo '<ul id="course_custom_sections">';
                             foreach($this->custom_sections as $section){
-                                echo '<li><h4>
+                                echo '<li id="'.$section->slug.'"><h4>
                                 <strong>'.$section->title.'</strong>
                                 <span>'.$section->description.'</span>
                                 <a class="remove_section dashicons dashicons-no-alt"></a>
-                                <a class="edit_section">EDIT</a>
+                                <a class="edit_section dashicons dashicons-edit"></a>
                                 </h4>'.
                                 '<input type="hidden" class="section_courses" value="'.$section->courses.'">'.
                                 '<input type="hidden" value="'.$section->slug.'" class="custom_course_section_slug">'.
                                 '<input type="hidden" class="section_all_courses" value="'.$section->all_courses.'">'.
-                                '<input type="hidden" class="section_visibility" value="'.$section->visibility.'"></li>';
+                                '<input type="hidden" class="section_visibility" value="'.$section->visibility.'"><div class="edit_box">';?>
+
+                                    <div class="custom_section_form_edit">
+                                        <ul class="section_form_table">
+                                                <li>
+                                                    <label><?php _e('Add Section Title','wplms-ccn');?></label>
+                                                    <span><input type="text" class="custom_section_title_edit" placeholder="<?php _e('Add Section Title','wplms-ccn'); ?>" /></span>
+                                                </li>    
+                                                <li>
+                                                    <label><?php _e('Add Section Slug','wplms-ccn');?></label>
+                                                    <span><input type="text" class="custom_section_slug_edit" placeholder="<?php _e('Add Section Slug','wplms-ccn'); ?>" /></span>
+                                                </li>
+                                                <li>
+                                                    <label><?php _e('Add Section Desciption','wplms-ccn');?></label>
+                                                    <span><textarea name="description" class="custom_section_description_edit" placeholder="<?php _e('Add Section description','wplms-ccn'); ?>"></textarea></span>
+                                                </li>
+
+                                                <li>
+                                                    <label><?php _e('Select courses','wplms-ccn');?></label>
+                                                    <span><select name="courses" class="custom_section_courses_edit selectcpt" data-cpt="course" data-placeholder="<?php _e('Select Courses','wplms-ccn'); ?>" multiple></select><span>OR</span>
+                                                    <input type="checkbox" name="all_courses" class="custom_section_all_courses_edit" value="1"/><?php _e('All Courses','wplms-ccn');?></span>
+                                                </li>
+                                                <li>
+                                                    <label><?php _e('Select Section Visibility','wplms-ccn');?></label>
+                                                    <span>
+                                                        <select name="visibility" class="custom_section_visibility_edit">
+                                                            <option value="everyone"><?php _e('Everyone','wplms-ccn');?></option>
+                                                            <option value="students"><?php _e('Students','wplms-ccn');?></option>
+                                                            <option value="instructors"><?php _e('Instructors','wplms-ccn');?></option>
+                                                            <option value="admin"><?php _e('Admin','wplms-ccn');?></option>
+                                                        </select>
+                                                    </span>
+                                                </li>
+
+                                                <li>
+                                                    <a id="edit_section_li" class="button-primary"><?php _e('Edit Section','wplms-ccn'); ?></a>
+                                                </li>
+                                        </ul>
+                                    </div>
+                                <?php echo '</div></li>';
                             }
                             echo '</ul>';
                         }
@@ -218,8 +257,7 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
                     default:
                     echo '<th scope="row" class="titledesc">'.$setting['label'].'</th>';
                     echo '<td class="forminp"><input type="text" name="'.$setting['name'].'" value="'.(isset($this->settings[$setting['name']])?$this->settings[$setting['name']]:(isset($setting['std'])?$setting['std']:'')).'" />';
-                    echo '<span>'.$setting['desc'].'</span></td>
-                    <td><a class="edit_section" >EDIT</a></td>';
+                    echo '<span>'.$setting['desc'].'</span></td>';
                     break;
                 }
             }
