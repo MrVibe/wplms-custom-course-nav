@@ -1,5 +1,5 @@
  jQuery(document).ready(function($){
-   // $('#course_custom_sections').trigger('section_added');
+   
     $('#add_custom_section').on('click',function(){
         $('.custom_section_form').toggle(200);
     });
@@ -21,70 +21,9 @@
             '<input type="hidden" class="section_visibility" value="'+ $('.custom_section_visibility').val()+'"><div class="edit_box"></div></li>');
         $('.custom_section_form').hide(200);
         $('.remove_section').click(function(){$(this).parent().remove();});
-        //$('#course_custom_sections').trigger('section_added');
+        $('#course_custom_sections').trigger('section_added');
     });
-
-    $('#course_custom_sections li').each(function(){
-        var $this = $(this);
-        var new_edit_slug='';
-        var edit_slug=$this.find('input.custom_course_section_slug').val();
-            $('li#'+edit_slug+' .edit_section').click(function(){
-               
-                edit_slug=$this.find('input.custom_course_section_slug').val();
-                var edit_title=$this.find('h4 strong').text();
-                var edit_description=$this.find('h4 span').text();
-                
-                var edit_courses=$this.find('input.section_courses').val();
-                var edit_all_courses=$this.find('input.section_all_courses').val();
-                var edit_visibility=$this.find('input.section_visibility').val();
-                
-                //$('.custom_section_form').clone().appendTo( 'li#'+edit_slug+' .edit_box' );
-                
-                $('.edit_box').addClass('active');
-                if($('.edit_box').hasClass('active')){
-                    $('#course_custom_sections_form').prop('disabled','true');
-                }
-                $('li#'+edit_slug+' .edit_box input.custom_section_title_edit').val(edit_title);
-                $('li#'+edit_slug+' .edit_box .custom_section_description_edit').val(edit_description);
-                $('li#'+edit_slug+' .edit_box .custom_section_courses_edit').val(edit_courses);
-                $('li#'+edit_slug+' .edit_box .custom_section_slug_edit').val(edit_slug);
-                if( edit_all_courses==1){
-                    $('li#'+edit_slug+' .edit_box .custom_section_all_courses_edit').attr('checked','checked');
-                }
-                if(edit_visibility.length<0){
-                    $('li#'+edit_slug+' .edit_box .custom_section_visibility_edit').val('everyone');
-                }else{
-                    $('li#'+edit_slug+' .edit_box .custom_section_visibility_edit').val(edit_visibility);
-                }
-                if($('li#'+edit_slug+' .edit_box ul.section_form_table .cancel_edit').length<=0){
-                   $('li#'+edit_slug+' .edit_box ul.section_form_table').append('<a class="cancel_edit button-primary">Close</a>'); 
-                }
-                
-                $('li#'+edit_slug+' .edit_box .custom_section_form_edit').toggle(350);
-                $('li#'+edit_slug+' .edit_box #edit_section_li').on('click',function(){
-                    new_edit_slug=$('li#'+edit_slug+' .edit_box .custom_section_slug_edit').val();
-                    $this.find('input.custom_course_section_slug').val($('li#'+edit_slug+' .edit_box .custom_section_slug_edit').val());
-                    $this.find('h4 strong').text($('li#'+edit_slug+' .edit_box input.custom_section_title_edit').val());
-                    $this.find('h4 span').text($('li#'+edit_slug+' .edit_box .custom_section_description_edit').val());
-                    
-                    $this.find('input.section_courses').val($('li#'+edit_slug+' .edit_box .custom_section_courses_edit').val());
-                    $this.find('input.section_all_courses').val($('li#'+edit_slug+' .edit_box .custom_section_all_courses_edit:checked').val());
-                    $this.find('input.section_visibility').val($('li#'+edit_slug+' .edit_box .custom_section_visibility_edit').val());
-                    $this.attr('id',$('li#'+edit_slug+' .edit_box .custom_section_slug_edit').val());
-                   console.log(new_edit_slug.length);
-                    if(new_edit_slug.length>0){
-                        edit_slug= new_edit_slug;
-                    }
-                   // $('#course_custom_sections').trigger('section_edit');
-                });
-                $('li#'+edit_slug+' .cancel_edit').on('click',function(){
-                    $('li#'+edit_slug+' .edit_box .custom_section_form_edit').hide(350);
-                });
-                 //$('#course_custom_sections').trigger('edit_trigger');
-            });
-            
-        }); 
-
+    
 
 
     $(function() {
@@ -184,7 +123,71 @@
 
 
 }); 
-
+jQuery('#course_custom_sections').trigger('section_added');
  jQuery(document).on('section_added','#course_custom_sections',function(){
-      
+      jQuery('#course_custom_sections li').each(function(){
+        var $this = jQuery(this);
+        var new_edit_slug='';
+        var edit_slug=$this.find('input.custom_course_section_slug').val();
+            jQuery('li#'+edit_slug+' .edit_section').click(function(){
+               
+                edit_slug=$this.find('input.custom_course_section_slug').val();
+                var edit_title=$this.find('h4 strong').text();
+                var edit_description=$this.find('h4 span').text();
+                
+                var edit_courses=$this.find('input.section_courses').val();
+                var edit_all_courses=$this.find('input.section_all_courses').val();
+                var edit_visibility=$this.find('input.section_visibility').val();
+                
+                //$('.custom_section_form').clone().appendTo( 'li#'+edit_slug+' .edit_box' );
+                
+                jQuery('.edit_box').addClass('active');
+                if(jQuery('.edit_box').hasClass('active')){
+                    jQuery('#course_custom_sections_form').prop('disabled','true');
+                }
+                jQuery('li#'+edit_slug+' .edit_box input.custom_section_title_edit').val(edit_title);
+                jQuery('li#'+edit_slug+' .edit_box .custom_section_description_edit').val(edit_description);
+                jQuery('li#'+edit_slug+' .edit_box .custom_section_courses_edit').val(edit_courses);
+                jQuery('li#'+edit_slug+' .edit_box .custom_section_slug_edit').val(edit_slug);
+                if( edit_all_courses==1){
+                    jQuery('li#'+edit_slug+' .edit_box .custom_section_all_courses_edit').attr('checked','checked');
+                }
+                if(edit_visibility.length<0){
+                    jQuery('li#'+edit_slug+' .edit_box .custom_section_visibility_edit').val('everyone');
+                }else{
+                    jQuery('li#'+edit_slug+' .edit_box .custom_section_visibility_edit').val(edit_visibility);
+                }
+                if(jQuery('li#'+edit_slug+' .edit_box ul.section_form_table .cancel_edit').length<=0){
+                   jQuery('li#'+edit_slug+' .edit_box ul.section_form_table').append('<a class="cancel_edit button-primary">Close</a>'); 
+                }
+                
+                jQuery('li#'+edit_slug+' .edit_box .custom_section_form_edit').toggle(350);
+                jQuery('li#'+edit_slug+' .edit_box #edit_section_li').on('click',function(){
+                    new_edit_slug=jQuery('li#'+edit_slug+' .edit_box .custom_section_slug_edit').val();
+                    $this.find('input.custom_course_section_slug').val($('li#'+edit_slug+' .edit_box .custom_section_slug_edit').val());
+                    $this.find('h4 strong').text(jQuery('li#'+edit_slug+' .edit_box input.custom_section_title_edit').val());
+                    $this.find('h4 span').text(jQuery('li#'+edit_slug+' .edit_box .custom_section_description_edit').val());
+                    
+                    $this.find('input.section_courses').val(jQuery('li#'+edit_slug+' .edit_box .custom_section_courses_edit').val());
+                    $this.find('input.section_all_courses').val(jQuery('li#'+edit_slug+' .edit_box .custom_section_all_courses_edit:checked').val());
+                    $this.find('input.section_visibility').val(jQuery('li#'+edit_slug+' .edit_box .custom_section_visibility_edit').val());
+                    $this.attr('id',jQuery('li#'+edit_slug+' .edit_box .custom_section_slug_edit').val());
+                   console.log(new_edit_slug.length);
+                    if(new_edit_slug.length>0){
+                        edit_slug= new_edit_slug;
+                    }
+                   // $('#course_custom_sections').trigger('section_edit');
+                });
+                jQuery('li#'+edit_slug+' .cancel_edit').on('click',function(){
+                    jQuery('li#'+edit_slug+' .edit_box .custom_section_form_edit').hide(350);
+                });
+                 //$('#course_custom_sections').trigger('edit_trigger');
+            });
+            
+        }); 
     });
+
+ jQuery(document).on('section_added',function(){
+       
+    });
+    
