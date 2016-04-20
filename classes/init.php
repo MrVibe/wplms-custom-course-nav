@@ -284,10 +284,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 					break;
 				}
 			}
-			if(empty(get_query_var( $section->slug )))
-				echo 'yesss';
 			echo '<h2 class="heading">'.$section->title.'</h2>';
-			$content=get_post_meta(get_the_ID(),'vibe_'.$section->slug,true);
+			$content=get_post_meta(get_the_ID(),'vibe_'.str_replace('-','_',$section->slug),true);
     		echo  apply_filters('the_content',$content);	
     	}	
 		

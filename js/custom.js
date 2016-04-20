@@ -1,12 +1,54 @@
+ function detect_run_selectcpt(){
+    jQuery('.custom_section_form:not(.hide) select.selectcoursecpt,.cloned_section_form select.selectcoursecpt').each(function(){
+        if(jQuery(this).hasClass('select2-hidden-accessible')){
+            return;
+        }
+        var $this = jQuery(this);
+        var cpt = $this.attr('data-cpt');
+        var placeholder = $this.attr('data-placeholder');
+        $this.select2({
+            minimumInputLength: 4,
+            placeholder: placeholder,
+            closeOnSelect: true,
+            allowClear: true,
+            ajax: {
+                url: ajaxurl,
+                type: "POST",
+                dataType: 'json',
+                delay: 250,
+                data: function(term){ 
+                        return  {   action: 'get_admin_select_cpt', 
+                                    security: jQuery('#vibe_security').val(),
+                                    cpt: cpt,
+                                    id:$this.attr('id'),
+                                    q: term,
+                                }
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },       
+                cache:true  
+            },
+        });
+    });
+ }
  jQuery(document).ready(function($){
    
     $('#add_custom_section').on('click',function(){
-        $('.custom_section_form').toggle(200);
+        var cloned = $('.custom_section_form.hide').clone();
+        cloned.removeClass('hide');
+        $('#course_custom_sections_form').append(cloned);
+        // SELECT 2 Migration
+        detect_run_selectcpt();
     });
+    
     $('.remove_section').click(function(){$(this).parent().parent().remove();});
-    $('#add_section').on('click',function(){
-        var title = $('.custom_section_title').val();
-
+    $('body').delegate('#add_section','click',function(){
+        var $this=$(this).parent().parent().parent();
+        console.log($this);
+        var title = $this.find('.custom_section_title').val();
         if( typeof title == 'undefined' || title.length == 0){
             alert('Please enter a valid title');
             return false;
@@ -14,14 +56,19 @@
 
         $('#message').remove();
 
-        $('#course_custom_sections').append('<li id="'+$('.custom_section_slug').val()+'"><h4><strong>'+title+'</strong><span>'+$('.custom_section_description').val()+'</span><a class="remove_section dashicons dashicons-no-alt"></a><a class="edit_section dashicons dashicons-edit"></a></h4>'+
-            '<input type="hidden" class="section_courses" value="'+ $('.custom_section_courses').val()+'">'+
-            '<input type="hidden" value="'+$('.custom_section_slug').val()+'" class="custom_course_section_slug">'+
-            '<input type="hidden" class="section_all_courses" value="'+ $('.custom_section_all_courses:checked').val()+'">'+
-            '<input type="hidden" class="section_visibility" value="'+ $('.custom_section_visibility').val()+'"><div class="edit_box"></div></li>');
+        var $courses = [];
+        $this.find('.custom_section_courses option:selected').each(function(){
+            var course={'id':$(this).val(),'text':$(this).text()};
+            $courses.push(course);
+        });
+        courses=encodeURIComponent(JSON.stringify($courses));
+        $('#course_custom_sections').append("<li id='"+$this.find(".custom_section_slug").val()+"'><h4><strong>"+title+"</strong><span>"+$this.find(".custom_section_description").val()+"</span><a class='remove_section dashicons dashicons-no-alt'></a><a class='edit_section dashicons dashicons-edit'></a></h4>"+
+            "<input type='hidden' class='section_courses' data-courses='"+courses+"' value='"+$this.find('.custom_section_courses').val()+"'>"+
+            "<input type='hidden' value='"+$this.find('.custom_section_slug').val()+"' class='custom_course_section_slug'>"+
+            "<input type='hidden' class='section_all_courses' value='"+ $this.find('.custom_section_all_courses:checked').val()+"'>"+
+            "<input type='hidden' class='section_visibility' value='"+ $this.find('.custom_section_visibility').val()+"'></li>");
         $('.custom_section_form').hide(200);
-        $('.remove_section').click(function(){$(this).parent().remove();});
-        $('#course_custom_sections').trigger('section_added');
+        $this.find('.remove_section').click(function(){$(this).parent().remove();});
     });
     
 
@@ -39,7 +86,7 @@
             var data = {title: $this.find('h4 strong').text(),'slug':$this.find('.custom_course_section_slug').val(),'description': $this.find('h4 span').text(), 'courses':$this.find('.section_courses').val(),'all_courses':$this.find('.section_all_courses').val(),'visibility':$this.find('.section_visibility').val()};
             custom_sections.push(data);
         });
-
+        $('#save_custom_sections').text('Saving...');
         $.ajax({
             type: "POST",
             url: ajaxurl,
@@ -50,7 +97,9 @@
             cache: false,
             success: function (html) {
                 $button.text(html);
-                setTimeout(function(){$button.text(defaultxt);}, 5000);
+                setTimeout(function(){$button.text(defaultxt);
+                }, 5000);
+
             }
         });
     });
@@ -88,106 +137,68 @@
             }
         });
     });
-   // SELECT 2 Migration
-    $('.selectcpt').each(function(){
-        var $this = $(this);
-        var cpt = $(this).attr('data-cpt');
-        var placeholder = $(this).attr('data-placeholder');
-        $(this).select2({
-            minimumInputLength: 4,
-            placeholder: placeholder,
-            closeOnSelect: true,
-            allowClear: true,
-            ajax: {
-                url: ajaxurl,
-                type: "POST",
-                dataType: 'json',
-                delay: 250,
-                data: function(term){ 
-                        return  {   action: 'get_admin_select_cpt', 
-                                    security: $('#vibe_security').val(),
-                                    cpt: cpt,
-                                    id:$this.attr('id'),
-                                    q: term,
-                                }
-                },
-                processResults: function (data) {
-                    return {
-                        results: data
-                    };
-                },       
-                cache:true  
-            },
-        });
-    });
-
+   
 
 }); 
-jQuery('#course_custom_sections').trigger('section_added');
- jQuery(document).on('section_added','#course_custom_sections',function(){
-      jQuery('#course_custom_sections li').each(function(){
-        var $this = jQuery(this);
-        var new_edit_slug='';
-        var edit_slug=$this.find('input.custom_course_section_slug').val();
-            jQuery('li#'+edit_slug+' .edit_section').click(function(){
-               
-                edit_slug=$this.find('input.custom_course_section_slug').val();
-                var edit_title=$this.find('h4 strong').text();
-                var edit_description=$this.find('h4 span').text();
-                
-                var edit_courses=$this.find('input.section_courses').val();
-                var edit_all_courses=$this.find('input.section_all_courses').val();
-                var edit_visibility=$this.find('input.section_visibility').val();
-                
-                //$('.custom_section_form').clone().appendTo( 'li#'+edit_slug+' .edit_box' );
-                
-                jQuery('.edit_box').addClass('active');
-                if(jQuery('.edit_box').hasClass('active')){
-                    jQuery('#course_custom_sections_form').prop('disabled','true');
-                }
-                jQuery('li#'+edit_slug+' .edit_box input.custom_section_title_edit').val(edit_title);
-                jQuery('li#'+edit_slug+' .edit_box .custom_section_description_edit').val(edit_description);
-                jQuery('li#'+edit_slug+' .edit_box .custom_section_courses_edit').val(edit_courses);
-                jQuery('li#'+edit_slug+' .edit_box .custom_section_slug_edit').val(edit_slug);
-                if( edit_all_courses==1){
-                    jQuery('li#'+edit_slug+' .edit_box .custom_section_all_courses_edit').attr('checked','checked');
-                }
-                if(edit_visibility.length<0){
-                    jQuery('li#'+edit_slug+' .edit_box .custom_section_visibility_edit').val('everyone');
-                }else{
-                    jQuery('li#'+edit_slug+' .edit_box .custom_section_visibility_edit').val(edit_visibility);
-                }
-                if(jQuery('li#'+edit_slug+' .edit_box ul.section_form_table .cancel_edit').length<=0){
-                   jQuery('li#'+edit_slug+' .edit_box ul.section_form_table').append('<a class="cancel_edit button-primary">Close</a>'); 
-                }
-                
-                jQuery('li#'+edit_slug+' .edit_box .custom_section_form_edit').toggle(350);
-                jQuery('li#'+edit_slug+' .edit_box #edit_section_li').on('click',function(){
-                    new_edit_slug=jQuery('li#'+edit_slug+' .edit_box .custom_section_slug_edit').val();
-                    $this.find('input.custom_course_section_slug').val($('li#'+edit_slug+' .edit_box .custom_section_slug_edit').val());
-                    $this.find('h4 strong').text(jQuery('li#'+edit_slug+' .edit_box input.custom_section_title_edit').val());
-                    $this.find('h4 span').text(jQuery('li#'+edit_slug+' .edit_box .custom_section_description_edit').val());
-                    
-                    $this.find('input.section_courses').val(jQuery('li#'+edit_slug+' .edit_box .custom_section_courses_edit').val());
-                    $this.find('input.section_all_courses').val(jQuery('li#'+edit_slug+' .edit_box .custom_section_all_courses_edit:checked').val());
-                    $this.find('input.section_visibility').val(jQuery('li#'+edit_slug+' .edit_box .custom_section_visibility_edit').val());
-                    $this.attr('id',jQuery('li#'+edit_slug+' .edit_box .custom_section_slug_edit').val());
-                   console.log(new_edit_slug.length);
-                    if(new_edit_slug.length>0){
-                        edit_slug= new_edit_slug;
-                    }
-                   // $('#course_custom_sections').trigger('section_edit');
-                });
-                jQuery('li#'+edit_slug+' .cancel_edit').on('click',function(){
-                    jQuery('li#'+edit_slug+' .edit_box .custom_section_form_edit').hide(350);
-                });
-                 //$('#course_custom_sections').trigger('edit_trigger');
-            });
-            
-        }); 
-    });
 
- jQuery(document).on('section_added',function(){
-       
-    });
+
+jQuery(document).on('click','#course_custom_sections li .edit_section',function(){
+    var li = jQuery(this).parent().parent();
     
+    if(jQuery(this).hasClass('cloned')){
+        li.find('.cloned_section_form').toggle(200);
+        return;
+    }
+
+    jQuery(this).addClass('cloned');
+
+    var cloned = jQuery('.custom_section_form').clone().attr('class','cloned_section_form');
+    cloned.find('.custom_section_title').val(li.find('h4 strong').text());
+    cloned.find('.custom_section_slug').val(li.find('.custom_course_section_slug').val()).attr('disabled','disabled');
+    cloned.find('.custom_section_description').val(li.find('h4 span').text());
+    if(li.find('.section_visibility').val().length>0){
+        cloned.find('.custom_section_visibility').val(li.find('.section_visibility').val());
+    }else{
+        cloned.find('.custom_section_visibility').val('everyone');
+    }
+    visibility=li.find('.section_all_courses').val();
+    if(visibility){
+
+        cloned.find('.custom_section_all_courses').attr('checked','checked');
+    }
+    var courses;
+
+    courses=li.find('.section_courses').attr('data-courses');
+    courses=jQuery.parseJSON(decodeURIComponent(courses));
+    jQuery.each(courses,function(key,item){
+        cloned.find('.custom_section_courses').append('<option value="'+item.id+'" selected="selected">'+item.text.split('+').join(' ')+'</option>');
+    });
+    cloned.find('#add_section').attr('id','').attr('class','save_edit_section button').text('Edit Section');
+    li.append(cloned);
+    li.find('.cloned_section_form').show(200);
+    detect_run_selectcpt();
+});
+
+jQuery(document).on('click','.close_section',function(){
+    jQuery(this).closest('.custom_section_form').remove();
+    jQuery(this).closest('.cloned_section_form').hide();
+    jQuery('.save_edit_section').trigger('click');
+});
+
+jQuery(document).on('click','.save_edit_section',function(){
+
+    var li = jQuery(this).parent().parent().parent().parent();
+    var $courses = [];
+        li.find('.custom_section_courses option:selected').each(function(){
+            var course={'id':jQuery(this).val(),'text':jQuery(this).text()};
+            $courses.push(course);
+        });
+    courses=encodeURIComponent(JSON.stringify($courses));
+    li.find('.section_courses').attr('data-courses',courses);
+    li.find('.section_courses').val(li.find('.custom_section_courses').val());
+    li.find('h4 strong').text(li.find('.custom_section_title').val());
+    li.find('h4 span').text(li.find('.custom_section_description').val());
+    li.find('.section_all_courses').val( li.find('.custom_section_all_courses:checked').val());
+    li.find('.section_visibility').val( li.find('.custom_section_visibility').val());
+
+});
