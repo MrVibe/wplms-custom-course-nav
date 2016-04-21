@@ -12,43 +12,58 @@
 }
 #course_custom_sections li h4 {
     width:400px;
-    height: 30px;
     border: 1px solid #d3d3d3;
     box-sizing: border-box;
-    line-height:2;
+    line-height: 2;
+    background: #FDFDFD;
+    padding: 15px;
+    position: relative;
 }
 #course_custom_sections li h4 span {
-    float:right;
     padding-right:5px;
 }
 #course_custom_sections li a {
     float:left;
     color:#ff0000;
     padding:3px;
+    position: absolute;
+    color: #ff0000;
+    padding: 3px;
+    top: 2px;
+    right: 0;
+    cursor:pointer;
 }
 .section_form_table input[type="text"],textarea{
     width:300px;
 }
 .custom_section_form.hide{display:none;}
 .section_fields{
-    width:700px;
     font-weight: bold;
     line-height: 1.8;
     font-size: 14px;
     margin-left: 14px;
+    height:50px;
 }
 h2.section {
-    width: 713px;
     padding: 14px;
     background: #FFF;
     font-size: 20px;
     border: rgba(79, 121, 125, 0.3) 1px solid;
 }
+h2.section span{
+    float: right;
+    margin: 0px 10px;
+    width: 350px;
+}
 h2.section span input{margin-left:35px;}
-.section span{float:right;}
 .section span input{margin-left: 50px;}
-.section_fields span{float:right;}
-.section_fields span input{margin-left: 50px;}
+.section_fields span{float:right;margin: 0px 20px;width: 350px;}
+.section_fields span input[type=radio] {
+    margin-left: 50px;
+}
+.section_fields span input.post_field[type=radio] {
+    margin-left: 10px;
+}
 a.edit_section {
     margin: 0px 10px;
 }
@@ -75,6 +90,7 @@ a.close_section {
     top: 0;
     right: 0;
     margin: 5px;
+    cursor: pointer;
 }
 @media (max-width: 768px){
 
@@ -97,8 +113,25 @@ a.close_section {
 a.save_edit_section.button {
     display: none;
 }
+#course_custom_sections li h4 span, #course_custom_sections li h4 strong {
+    padding-right: 5px;
+    overflow: hidden;
+    font-size: 16px;
+    line-height: 1;
+}
+#course_custom_sections li h4 span {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+}
 
 
-
-
-
+a.edit_section.dashicons.dashicons-edit {
+    right: 20px !important;
+}
+.permalinks_notice {
+    width: 400px !important;
+}
+.section_fields textarea.post_field {
+    width: 100%;
+}

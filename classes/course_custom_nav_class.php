@@ -46,14 +46,13 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
         }
 
         function settings(){
-            $tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'general';
+            $tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'course_section';
             $this->settings_tabs($tab);
             $this->$tab();
          }
 
-         function settings_tabs( $current = 'general' ) {
+         function settings_tabs( $current = 'course_section' ) {
             $tabs = array( 
-                    'general' => __('General','wplms-ccn'), 
                     'course_section' => __('Custom Course Sections','wplms-ccn'), 
                     'course_creation' => __('Front End Course Creation','wplms-ccn'), 
                     );
@@ -70,9 +69,7 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
             }
         }
 
-        function general(){
-            echo '<h3>'.__('Wplms course custom nav Settings','bp-social-connect').'</h3>';
-        }
+       
 
         function course_section(){
 
@@ -99,11 +96,20 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
             
             if($key != 'create_course'){
                 echo '<div class="section_wrapper">';
-                echo '<h2 class="section" id="'.$key.'">'.$value['title'].'<span><input type="radio" value="1" id="'.$key.'yes" class="course_section" name="'.$key.'" '.((!isset($this->course_creation[$i]['visibility']) || $this->course_creation[$i]['visibility'])?'CHECKED':'').' /><label for="'.$key.'yes">'.__('Show','wplms-ccn').'</label><input type="radio" value="0" name="'.$key.'" class="course_section" id="'.$key.'no" '.((empty($this->course_creation[$i]['visibility']) && isset($this->course_creation[$i]['visibility']))?'CHECKED':'').' /><label for="'.$key.'no">'.__('Hide','wplms-ccn').'</label></span></h2><ul id="'.$key.'" >';
+                echo '<h2 class="section" id="'.$key.'">'.$value['title'];
+                echo '<span>'.__('Defaults','wplms-ccn').'</span>';
+                echo '<span><input type="radio" value="1" id="'.$key.'yes" class="course_section" name="'.$key.'" '.((!isset($this->course_creation[$i]['visibility']) || $this->course_creation[$i]['visibility'])?'CHECKED':'').' /><label for="'.$key.'yes">'.__('Show','wplms-ccn').'</label><input type="radio" value="0" name="'.$key.'" class="course_section" id="'.$key.'no" '.((empty($this->course_creation[$i]['visibility']) && isset($this->course_creation[$i]['visibility']))?'CHECKED':'').' /><label for="'.$key.'no">'.__('Hide','wplms-ccn').'</label></span></h2><ul id="'.$key.'" >';
 
                 foreach($value['fields'] as $j=>$field){ 
                     if(!in_array($field['type'],array('button'))){
-                    echo '<li class="section_fields" id="'.$field['id'].'">'.$field['label'].'<span><input type="radio" class="course_field_label" value="1" id="'.$field['id'].'yes" name="'.$field['id'].'" '.((!isset($this->course_creation[$i]['fields'][$j]['visibility']) || $this->course_creation[$i]['fields'][$j]['visibility'])?'CHECKED':'').' /><label for="'.$field['id'].'yes">'.__('Show','wplms-ccn').'</label><input type="radio" class="course_field_label" value="0" name="'.$field['id'].'" id="'.$field['id'].'no" '.((empty($this->course_creation[$i]['fields'][$j]['visibility']) && isset($this->course_creation[$i]['fields'][$j]['visibility']))?'CHECKED':'').'/><label for="'.$field['id'].'no">'.__('Hide','wplms-ccn').'</label></span>'.'</li>';
+                    echo '<li class="section_fields" id="'.$field['id'].'">'.$field['label'];
+                    echo '<span>';
+                    if(!empty($this->course_creation[$i]['fields'][$j]['default'])){
+                        $field['std'] = $field['value'] = $this->course_creation[$i]['fields'][$j]['default'];
+                    } 
+                    $this->generate_fields($field);
+                    echo '</span>';
+                    echo '<span><input type="radio" class="course_field_label" value="1" id="'.$field['id'].'yes" name="'.$field['id'].'" '.((!isset($this->course_creation[$i]['fields'][$j]['visibility']) || $this->course_creation[$i]['fields'][$j]['visibility'])?'CHECKED':'').' /><label for="'.$field['id'].'yes">'.__('Show','wplms-ccn').'</label><input type="radio" class="course_field_label" value="0" name="'.$field['id'].'" id="'.$field['id'].'no" '.((empty($this->course_creation[$i]['fields'][$j]['visibility']) && isset($this->course_creation[$i]['fields'][$j]['visibility']))?'CHECKED':'').'/><label for="'.$field['id'].'no">'.__('Hide','wplms-ccn').'</label></span></li>';
                     }
                 }
                 echo '</ul>';
@@ -115,8 +121,77 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
            wp_nonce_field('vibe_security','vibe_security'); 
           echo '<a id="save_course_creation_settings" class="button-primary">'.__('Save Settings','wplms-ccn').'</a>';
           
-        }
+        }   
 
+        function generate_fields($field){
+            switch($field['type']){
+                case 'number':
+                        echo '<input type="number" data-type="number" name="'.$field['id'].'" class="post_field" value="'.(isset($field['std'])?$field['std']:(isset($field['default'])?$field['default']:'')).'" />';
+                break;
+                case 'duration':
+                echo '<select data-id="'.$field['id'].'" class="post_field" data-type="'.$field['type'].'" >';
+                $field['options'] = array(
+                        array('value'=>1,'label'=>__('Seconds','wplms-front-end')),
+                        array('value'=>60,'label'=>__('Minutes','wplms-front-end')),
+                        array('value'=>3600,'label'=>__('Hours','wplms-front-end')),
+                        array('value'=>86400,'label'=>__('Days','wplms-front-end')),
+                        array('value'=>604800,'label'=>__('Weeks','wplms-front-end')),
+                        array('value'=>2592000,'label'=>__('Months','wplms-front-end')),
+                        array('value'=>31536000,'label'=>__('Years','wplms-front-end')),
+                    );
+                if(!empty($field['options'])){
+                    foreach($field['options'] as $option){
+                        echo '<option value="'.$option['value'].'" '.(($field['value'] == $option['value'])?'selected="selected"':'').'>'.$option['label'].'</option>';
+                    }
+                }
+                echo '</select>';
+                break;
+                /*case 'date':
+                case 'calendar':
+                    echo '<input type="text" placeholder="'.$field['default'].'" value="'.$field['value'].'" data-id="'.$field['id'].'" class="mid_box date_box post_field '.(empty($field['text'])?'form_field':'').'" data-id="'.$field['id'].'" data-type="'.$field['type'].'"/>';
+                    echo   '<script>jQuery(document).ready(function(){
+                            jQuery( ".date_box" ).datepicker({
+                                dateFormat: "yy-mm-dd",
+                                numberOfMonths: 1,
+                                showButtonPanel: true,
+                            });});</script><style>.ui-datepicker{z-index:99 !important;}</style>';
+                break;*/
+                case 'yesno':
+                case 'conditionalswitch':
+                case 'switch':
+                case 'showhide':
+                case 'reverseconditionalswitch':
+                $i=0;
+                foreach($field['options'] as $key=>$value){
+                    if(is_array($value)){
+                        $key = $value['value'];
+                        $value = $value['label'];
+                    }
+                    echo '<input type="radio" class="switch-input post_field '.$field['id'].'" name="default_'.$field['id'].'" data-type="checkbox" value="'.$key.'" id="default_'.$field['id'].$key.'" ';checked($field['value'],$key); echo '>';
+                       echo '<label for="default_'.$field['id'].$key.'">'.$value.'</label>';
+                }
+                break;
+                case 'select':
+                    echo '<select class="post_field" style="width: 100%;" data-id="'.$field['id'].'" data-type="'.$field['type'].'" >';
+                if(!empty($field['options'])){
+                    foreach($field['options'] as $option){
+                        echo '<option value="'.$option['value'].'" '.(($field['value'] == $option['value'])?'selected="selected"':'').'>'.$option['label'].'</option>';
+                    }
+                }
+                echo '</select>';
+                break;
+                case 'textarea':
+                case 'editor':
+                    echo '<textarea name="'.$field['id'].'" class="post_field">'.(isset($field['std'])?$field['std']:(isset($field['default'])?$field['default']:'')).'</textarea>';
+                break;
+                case 'text':
+                    echo '<input type="text" name="'.$field['id'].'" class="post_field" value="'.(isset($field['std'])?$field['std']:(isset($field['default'])?$field['default']:'')).'" />';
+                break;
+                default:
+                echo 'NA';
+                break;
+            }
+        }
         function generate_form($tab,$settings=array()){
             echo '<form method="post" id="course_custom_sections_form">
                     <table class="form-table">';

@@ -33,8 +33,13 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 			add_action('init',array($this,'wplms_custom_section_define_plugin'));
 			add_filter('wplms_course_metabox',array($this,'add_custom_section_metabox_backend'));
 			add_filter('wplms_course_creation_tabs',array($this,'add_custom_section_metabox_frontend'));
+			add_filter('wplms_unit_metabox',array($this,'wplms_ccn_unit_settings'));
     	}
 
+
+    	function wplms_ccn_unit_settings($settings){
+    		return $settings;
+    	}
 
     	function custom_course_creation_settings($settings){
     		if($_GET['page']=='wplms-course-custom-nav' || current_user_can('manage_options'))
@@ -42,6 +47,9 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
     		foreach($this->course_creation as $cc_key => $cc_value){
     			foreach($cc_value['fields'] as $f_key => $f_value){
     				foreach($settings as $s_key => $s_value){
+    					if($s_key==$f_value['field']  && !empty($f_value['default'])){
+							$settings[$s_key]['std'] = $f_value['default'];
+						}
 			 			if($s_key==$f_value['field']  && $f_value['visibility']=='0'){
 			 				unset($settings[$s_key]);
 			 			}
@@ -62,8 +70,12 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
     					unset($settings[$key]);
     				}
     				foreach($value['fields'] as $j=>$field){
+    					if(!empty($this->course_creation[$i]['fields'][$j]['default'])){
+							$settings[$key]['fields'][$j]['default'] = $this->course_creation[$i]['fields'][$j]['default'];
+						}
     					if($this->course_creation[$i]['fields'][$j]['visibility']==0){
     						if($settings[$key]['fields'][$j]['type']!='button'){
+
     							unset($settings[$key]['fields'][$j]);
     						}
     					}
@@ -170,6 +182,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 		}
 
 	    function add_custom_section_metabox_backend($settings){
+	    	if(!isset($_GET['post']) || empty($_GET['post']))
+	    		return $settings;
 	    	$post_id = $_GET['post'];
 	    	foreach($this->custom_section as $section){
 	    		$courses=explode(',',$section->courses);
@@ -190,6 +204,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 	    function add_custom_section_metabox_frontend($settings){
 	    	$fields = $settings['course_settings']['fields'];
     		$post_id = $_GET['action'];
+    		if(empty($this->custom_section))
+    			return $settings;
 	    	foreach($this->custom_section as $section){
 	    		$courses=explode(',',$section->courses);
 	    		if((isset($section->courses) && in_array($post_id,$courses)) ||(isset($section->courses) && $section->all_courses=='1')){
