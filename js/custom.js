@@ -52,8 +52,13 @@
     $('body').delegate('#add_section','click',function(){
         var $this=$(this).parent().parent().parent();
         var title = $this.find('.custom_section_title').val();
+        var slug = $this.find('.custom_course_section_slug').val();
         if( typeof title == 'undefined' || title.length == 0){
             alert('Please enter a valid title');
+            return false;
+        }
+        if( typeof slug == 'undefined' || title.length == 0){
+            alert('Please enter a valid slug');
             return false;
         }
 
