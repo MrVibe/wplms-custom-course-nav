@@ -156,16 +156,6 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
                 }
                 echo '</select>';
                 break;
-                /*case 'date':
-                case 'calendar':
-                    echo '<input type="text" placeholder="'.$field['default'].'" value="'.$field['value'].'" data-id="'.$field['id'].'" class="mid_box date_box post_field '.(empty($field['text'])?'form_field':'').'" data-id="'.$field['id'].'" data-type="'.$field['type'].'"/>';
-                    echo   '<script>jQuery(document).ready(function(){
-                            jQuery( ".date_box" ).datepicker({
-                                dateFormat: "yy-mm-dd",
-                                numberOfMonths: 1,
-                                showButtonPanel: true,
-                            });});</script><style>.ui-datepicker{z-index:99 !important;}</style>';
-                break;*/
                 case 'yesno':
                 case 'conditionalswitch':
                 case 'switch':
@@ -334,6 +324,7 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
             _e('Sections saved','wplms-ccn');
             die();
         }
+
         function save_custom_course_creation(){
             if ( !isset($_POST['security']) || !isset($_POST['security']) || !wp_verify_nonce($_POST['security'],'vibe_security') ){
                 _e('Security check Failed. Contact Administrator.','wplms-ccn');
@@ -343,7 +334,6 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
      
             $custom_sections = $this->objToArray($sections,$custom_sections);
             update_option('custom_course_creation',$custom_sections);
-            //print_r(get_option('custom_course_creation'));
             _e('Settings saved','wplms-ccn');
             die();
         }

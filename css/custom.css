@@ -135,3 +135,6 @@ a.edit_section.dashicons.dashicons-edit {
 .section_fields textarea.post_field {
     width: 100%;
 }
+.section_fields span input.post_field[type=radio]:first-child{
+margin-left:0;
+}

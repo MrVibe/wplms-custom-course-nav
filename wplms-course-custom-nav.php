@@ -13,11 +13,11 @@ Text Domain : wplms-ccn
 /*
 Copyright GPLv2
 
-wplms_customizer program is free software; you can redistribute it and/or modify
+WPLMS Course Custom Nav Plugin program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License, version 2, as 
 published by the Free Software Foundation.
 
-wplms_customizer program is distributed in the hope that it will be useful,
+WPLMS Course Custom Nav Plugin program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.

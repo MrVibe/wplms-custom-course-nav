@@ -18,7 +18,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 
     		add_filter('wplms_course_metabox',array($this,'custom_course_creation_settings'),999);
     		add_filter('wplms_course_product_metabox',array($this,'custom_course_creation_settings'),999);
-    		add_filter('wplms_course_creation_tabs',array($this,'course_creation_wplms_course_creation_tabs'),99999);
+    		add_filter('wplms_course_creation_tabs',array($this,'course_creation_wplms_course_creation_tabs'),9999);
     		
     		 /*===== Permalink Setting === */
 	        add_action('wplms_course_action_point_permalink_settings',array($this,'permalink_setting_course_navs'));
