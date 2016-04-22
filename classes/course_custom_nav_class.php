@@ -30,6 +30,16 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
             wp_enqueue_script('customselect2',VIBE_PLUGIN_URL.'/vibe-customtypes/metaboxes/js/select2.min.js');
             wp_enqueue_style('customselect2',VIBE_PLUGIN_URL.'/vibe-customtypes/metaboxes/css/select2.min.css');
             wp_enqueue_script('wplms_course_custom_nav_js',plugins_url('../js/custom.js',__FILE__),array('jquery','jquery-ui-sortable'));
+            $translation_array=array(
+                'permalinks_save_notice' => sprintf(_x('Please re-save permalinks, %s link %s','notice shown to users on creating/editing new sections','wplms-ccn'),'<a href="'.admin_url('options-permalink.php').'">','</a>'),
+                'saving'=> _x('Saving...','saving text in save section button','wplms-ccn'),
+                'edit_section'=>_x('Edit Section','edit button text','wplms-ccn'),
+                'delete_section_confirm'=>_x('Do you want to delete this section?','delete section confirmation popup','wplms-ccn'),
+                'valid_title'=>_x('Please enter a valid title','valid title warning','wplms-ccn'),
+                'valid_slug'=>_x('Please enter a valid slug','valid slug warning','wplms-ccn')
+
+                );
+            wp_localize_script( 'wplms_course_custom_nav_js', 'wplms_course_custom_nav_js', $translation_array );
             wp_enqueue_style('wplms_course_custom_nav_css',plugins_url('../css/custom.css',__FILE__));
         }
         function init_wplms_course_nav_settings(){
@@ -319,9 +329,8 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
             }
             $sections = json_decode(stripslashes($_POST['sections']));
      
-            //$custom_sections = $this->objToArray($sections,$custom_sections);
             update_option('custom_course_sections',$sections);
-            //print_r(get_option('custom_course_creation'));
+            
             _e('Sections saved','wplms-ccn');
             die();
         }
@@ -335,7 +344,7 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
             $custom_sections = $this->objToArray($sections,$custom_sections);
             update_option('custom_course_creation',$custom_sections);
             //print_r(get_option('custom_course_creation'));
-            _e('Sections saved','wplms-ccn');
+            _e('Settings saved','wplms-ccn');
             die();
         }
 

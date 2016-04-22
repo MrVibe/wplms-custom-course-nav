@@ -45,20 +45,20 @@
     });
     
     $('.remove_section').click(function(){
-        if (confirm('Do you want to delete this section?')) {
+        if (confirm(wplms_course_custom_nav_js.delete_section_confirm)) {
             $(this).parent().parent().remove();
         }
     });
     $('body').delegate('#add_section','click',function(){
         var $this=$(this).parent().parent().parent();
         var title = $this.find('.custom_section_title').val();
-        var slug = $this.find('.custom_course_section_slug').val();
+        var slug = $this.find('.custom_section_slug').val();
         if( typeof title == 'undefined' || title.length == 0){
-            alert('Please enter a valid title');
+            alert(wplms_course_custom_nav_js.valid_title);
             return false;
         }
-        if( typeof slug == 'undefined' || title.length == 0){
-            alert('Please enter a valid slug');
+        if( typeof slug == 'undefined' || slug.length == 0){
+            alert(wplms_course_custom_nav_js.valid_slug);
             return false;
         }
 
@@ -76,7 +76,11 @@
             "<input type='hidden' class='section_all_courses' value='"+ $this.find('.custom_section_all_courses:checked').val()+"'>"+
             "<input type='hidden' class='section_visibility' value='"+ $this.find('.custom_section_visibility').val()+"'></li>");
         $('.custom_section_form').hide(200);
-        $this.find('.remove_section').click(function(){$(this).parent().remove();});
+        $('.remove_section').click(function(){
+            if (confirm(wplms_course_custom_nav_js.delete_section_confirm)) {
+               $(this).parent().parent().remove();
+            }   
+        });
     });
     
 
@@ -94,7 +98,7 @@
             var data = {title: $this.find('h4 strong').text(),'slug':$this.find('.custom_course_section_slug').val(),'description': $this.find('h4 span').text(), 'courses':$this.find('.section_courses').val(),'all_courses':$this.find('.section_all_courses').val(),'visibility':$this.find('.section_visibility').val()};
             custom_sections.push(data);
         });
-        $('#save_custom_sections').text('Saving...');
+        $('#save_custom_sections').text(wplms_course_custom_nav_js.saving);
         $.ajax({
             type: "POST",
             url: ajaxurl,
@@ -105,7 +109,7 @@
             cache: false,
             success: function (html) {
                 $button.text(html);
-                var message='<div class="notice notice-warning is-dismissible permalinks_notice" id="message"><p>Please re-save permalinks</p></div>';
+                var message='<div class="notice notice-warning is-dismissible permalinks_notice" id="message"><p>'+wplms_course_custom_nav_js.permalinks_save_notice+'</p></div>';
                 $button.next().after(message);
                 setTimeout(function(){
                     $button.text(defaultxt);
@@ -139,7 +143,7 @@
             section_fields={section: $this.find('h2.section').attr('id'),'visibility': section_visibility,'fields':fields};
             custom_creation_visibility.push(section_fields);
         });
-        $('#save_course_creation_settings').text('Saving...');
+        $('#save_course_creation_settings').text(wplms_course_custom_nav_js.saving);
         $.ajax({
             type: "POST",
             url: ajaxurl,
@@ -170,7 +174,6 @@ jQuery(document).on('click','#course_custom_sections li .edit_section',function(
     jQuery(this).addClass('cloned');
 
     var cloned = jQuery('.custom_section_form.hide').clone().attr('class','cloned_section_form');
-    console.log(cloned);
     cloned.find('.custom_section_title').val(li.find('h4 strong').text());
     cloned.find('.custom_section_slug').val(li.find('.custom_course_section_slug').val()).attr('disabled','disabled');
     cloned.find('.custom_section_description').val(li.find('h4 span').text());
