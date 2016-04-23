@@ -33,8 +33,48 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 			add_action('init',array($this,'wplms_custom_section_define_plugin'));
 			add_filter('wplms_course_metabox',array($this,'add_custom_section_metabox_backend'));
 			add_filter('wplms_course_creation_tabs',array($this,'add_custom_section_metabox_frontend'));
+			add_action('save_post',array($this,'save_hidden_post_meta'));
+			add_action('wplms_front_end_save_course_pricing',array($this,'save_course_pricng_defaults_frontend'),99);
+			add_action('wplms_front_end_save_course_settings',array($this,'save_course_settings_defaults_frontend'),99);
+    	}
+    	function save_course_settings_defaults_frontend($post_id){
+    		if(empty($this->course_creation))
+    			return;
+    		$tabs=WPLMS_Front_End_Fields::init();
+    		$settings=$tabs->tabs();
+    		foreach($this->course_creation[0]['fields'] as  $value){
+    			if($value['visibility']=='0' && !empty($value['default']) && get_post_type($post_id)=='course'){
+    				update_post_meta($post_id,$value['field'],$value['default']);
+    			}
+    		}
     	}
 
+
+    	function save_course_pricng_defaults_frontend($post_id){
+    		if(empty($this->course_creation))
+    			return;
+    		$tabs=WPLMS_Front_End_Fields::init();
+    		$settings=$tabs->tabs();
+    		foreach($this->course_creation[3]['fields'] as  $value){
+    			if($value['visibility']=='0' && !empty($value['default']) && get_post_type($post_id)=='course'){
+    				update_post_meta($post_id,$value['field'],$value['default']);
+    			}
+    		}
+    	}
+
+
+
+    	function save_hidden_post_meta($post_id){
+    		if(empty($this->course_creation))
+    			return;
+    		foreach($this->course_creation as $cc_key => $cc_value){
+    			foreach($cc_value['fields'] as $f_key => $f_value){
+		 			if($f_value['visibility']=='0' && !empty($f_value['default']) && get_post_type($post_id) == 'course'){
+		 				update_post_meta($post_id,$f_value['field'],$f_value['default']);
+		 			}
+    			}
+    		}
+    	}
 
 
     	function custom_course_creation_settings($settings){
@@ -61,7 +101,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
     	function course_creation_wplms_course_creation_tabs($settings){
     		if(empty($this->course_creation))
     			return $settings;
-    		if($_GET['page']=='wplms-course-custom-nav' || current_user_can('manage_options'))
+    		if($_GET['page']=='wplms-course-custom-nav' /*|| current_user_can('manage_options')*/)
     			return $settings;
     		$i=0;
     		foreach ($settings as $key => $value) {

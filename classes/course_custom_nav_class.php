@@ -268,6 +268,7 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
                                     <li>
                                         <label><?php _e('Add Section Slug','wplms-ccn');?></label>
                                         <span><input type="text" class="custom_section_slug" placeholder="<?php _e('Add Section Slug','wplms-ccn'); ?>" /></span>
+                                         <span class="warning_slug"><strong><?php _e('Slug must not contain any special character or spaces."-" and "_" are allowed.It must be unique and cannot be changed later.','wplms-ccn');?></strong></span>
                                     </li>
                                     <li>
                                         <label><?php _e('Add Section Desciption','wplms-ccn');?></label>

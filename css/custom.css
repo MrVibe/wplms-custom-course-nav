@@ -108,7 +108,7 @@ a.close_section {
 }
 .custom_section_form {
     margin: 20px 10px;
-    padding: 10px 10px;
+    padding: 10px 25px;
 }
 a.save_edit_section.button {
     display: none;
@@ -137,4 +137,9 @@ a.edit_section.dashicons.dashicons-edit {
 }
 .section_fields span input.post_field[type=radio]:first-child{
 margin-left:0;
+}
+.warning_slug{
+    display: block;
+    color: red;
+    margin: 3px 0 20px 0;
 }
