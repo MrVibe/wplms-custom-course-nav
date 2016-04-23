@@ -40,6 +40,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
     	function save_course_settings_defaults_frontend($post_id){
     		if(empty($this->course_creation))
     			return;
+    		if(current_user_can('manage_options'))
+    			return;
     		$tabs=WPLMS_Front_End_Fields::init();
     		$settings=$tabs->tabs();
     		foreach($this->course_creation[0]['fields'] as  $value){
@@ -52,6 +54,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 
     	function save_course_pricng_defaults_frontend($post_id){
     		if(empty($this->course_creation))
+    			return;
+    		if(current_user_can('manage_options'))
     			return;
     		$tabs=WPLMS_Front_End_Fields::init();
     		$settings=$tabs->tabs();
