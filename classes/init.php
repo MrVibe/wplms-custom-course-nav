@@ -101,7 +101,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
     	function course_creation_wplms_course_creation_tabs($settings){
     		if(empty($this->course_creation))
     			return $settings;
-    		if($_GET['page']=='wplms-course-custom-nav' /*|| current_user_can('manage_options')*/)
+    		if($_GET['page']=='wplms-course-custom-nav' || current_user_can('manage_options'))
     			return $settings;
     		$i=0;
     		foreach ($settings as $key => $value) {
