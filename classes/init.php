@@ -344,9 +344,13 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 					break;
 				}
 			}
-			echo '<h2 class="heading">'.$section->title.'</h2>';
-			$content=get_post_meta(get_the_ID(),'vibe_'.str_replace('-','_',$section->slug),true);
-    		echo  apply_filters('the_content',$content);	
+			$courses=explode(',',$section->courses);
+    		$check=$this->check_visibility($section->visibility);
+    		if(((isset($section->courses) && in_array($course_id,$courses))  ||  $section->all_courses=='1') && $check && $action==$section->slug){
+				echo '<h2 class="heading">'.$section->title.'</h2>';
+				$content=get_post_meta(get_the_ID(),'vibe_'.str_replace('-','_',$section->slug),true);
+	    		echo  apply_filters('the_content',$content);
+    		}	
     	}	
 		
 
