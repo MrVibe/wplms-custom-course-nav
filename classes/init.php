@@ -355,7 +355,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 		
 
     }//class WPLMS_Course_Custom_Sections ends here
-
+	WPLMS_Course_Custom_Sections::init();
 }
 
-WPLMS_Course_Custom_Sections::init();
+
