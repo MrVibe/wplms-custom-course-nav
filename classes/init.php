@@ -305,11 +305,10 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
     	}
 
     	function wplms_custom_section_link($nav){
-    		global $post;
-    		$course_id = $post->ID;
-   
     		if(empty($this->custom_section))
     			return $nav;
+    		global $post;
+    		$course_id = $post->ID;
 
     		$p = Vibe_CustomTypes_Permalinks::init();
     		$permalinks = $p->permalinks;
@@ -334,6 +333,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
     	function wplms_custom_section_page(){
 			if(empty($this->custom_section))
 				return;
+			global $post;
+    		$course_id = $post->ID;
 			$action = bp_current_action();
 			if(empty($action)){
 				$action = $_GET['action'];
