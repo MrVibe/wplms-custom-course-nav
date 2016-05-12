@@ -40,6 +40,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
     	function save_course_settings_defaults_frontend($post_id){
     		if(empty($this->course_creation))
     			return;
+    		if(current_user_can('manage_options'))
+    			return;
     		$tabs=WPLMS_Front_End_Fields::init();
     		$settings=$tabs->tabs();
     		foreach($this->course_creation[0]['fields'] as  $value){
@@ -52,6 +54,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 
     	function save_course_pricng_defaults_frontend($post_id){
     		if(empty($this->course_creation))
+    			return;
+    		if(current_user_can('manage_options'))
     			return;
     		$tabs=WPLMS_Front_End_Fields::init();
     		$settings=$tabs->tabs();
@@ -330,6 +334,9 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
     	function wplms_custom_section_page(){
 			if(empty($this->custom_section))
 				return;
+			global $post;
+    		$course_id = $post->ID;
+			
 			$action = bp_current_action();
 			if(empty($action)){
 				$action = $_GET['action'];
@@ -340,14 +347,18 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 					break;
 				}
 			}
-			echo '<h2 class="heading">'.$section->title.'</h2>';
-			$content=get_post_meta(get_the_ID(),'vibe_'.str_replace('-','_',$section->slug),true);
-    		echo  apply_filters('the_content',$content);	
+			$courses=explode(',',$section->courses);
+    		$check=$this->check_visibility($section->visibility);
+    		if(((isset($section->courses) && in_array($course_id,$courses))  ||  $section->all_courses=='1') && $check && $action==$section->slug){
+				echo '<h2 class="heading">'.$section->title.'</h2>';
+				$content=get_post_meta(get_the_ID(),'vibe_'.str_replace('-','_',$section->slug),true);
+	    		echo  apply_filters('the_content',$content);
+    		}	
     	}	
 		
 
     }//class WPLMS_Course_Custom_Sections ends here
-
+	WPLMS_Course_Custom_Sections::init();
 }
 
-WPLMS_Course_Custom_Sections::init();
+
