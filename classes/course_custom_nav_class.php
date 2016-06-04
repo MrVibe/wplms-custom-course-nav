@@ -286,6 +286,8 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
                                             <select name="visibility" class="custom_section_visibility">
                                                 <option value="everyone"><?php _e('Everyone','wplms-ccn');?></option>
                                                 <option value="students"><?php _e('Students','wplms-ccn');?></option>
+                                                <option value="course_students"><?php _e('All Course Students','wplms-ccn');?></option>
+                                                <option value="active_course_students"><?php _e('Active Course Students','wplms-ccn');?></option>
                                                 <option value="instructors"><?php _e('Instructors','wplms-ccn');?></option>
                                                 <option value="admin"><?php _e('Admin','wplms-ccn');?></option>
                                             </select>

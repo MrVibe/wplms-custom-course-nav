@@ -286,15 +286,31 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 					case 'students':
 						if(is_user_logged_in())
 							$check=1;
-					break;
+						break;
+					case 'course_students':
+						$user_id = get_current_user_id();
+						$course_id = get_the_ID();
+						if(function_exists('wplms_user_course_check')){
+							if(is_user_logged_in() && wplms_user_course_check($user_id,$course_id))
+							$check=1;
+						}
+						break;
+					case 'active_course_students':
+						$user_id = get_current_user_id();
+						$course_id = get_the_ID();
+						if(function_exists('wplms_user_course_active_check')){
+							if(is_user_logged_in() && wplms_user_course_active_check($user_id,$course_id))
+							$check=1;
+						}
+						break;
 					case 'instructors':
 						if(is_user_logged_in() && current_user_can('edit_posts'))
 							$check=1;
-					break;
+						break;
 					case 'admin':
 						if(is_user_logged_in() && current_user_can('manage_options'))
 							$check=1;
-					break;
+						break;
     				
     				default:
     					$check=0;
@@ -305,8 +321,10 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
     	}
 
     	function wplms_custom_section_link($nav){
+   
     		if(empty($this->custom_section))
     			return $nav;
+    		
     		global $post;
     		$course_id = $post->ID;
 
@@ -335,6 +353,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 				return;
 			global $post;
     		$course_id = $post->ID;
+
 			$action = bp_current_action();
 			if(empty($action)){
 				$action = $_GET['action'];
@@ -346,17 +365,17 @@ if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTyp
 				}
 			}
 			$courses=explode(',',$section->courses);
-    		$check=$this->check_visibility($section->visibility);
-    		if(((isset($section->courses) && in_array($course_id,$courses))  ||  $section->all_courses=='1') && $check && $action==$section->slug){
+			$check=$this->check_visibility($section->visibility);
+			if(((isset($section->courses) && in_array($course_id,$courses))  ||  $section->all_courses=='1') && $check && $action == $section->slug){
 				echo '<h2 class="heading">'.$section->title.'</h2>';
 				$content=get_post_meta(get_the_ID(),'vibe_'.str_replace('-','_',$section->slug),true);
 	    		echo  apply_filters('the_content',$content);
-    		}	
+    		}
     	}	
 		
 
     }//class WPLMS_Course_Custom_Sections ends here
-	WPLMS_Course_Custom_Sections::init();
-}
 
+WPLMS_Course_Custom_Sections::init();
+}
 
