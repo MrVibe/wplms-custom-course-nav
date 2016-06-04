@@ -3,7 +3,7 @@
 Plugin Name: WPLMS Course Custom Nav Plugin
 Plugin URI: http://www.Vibethemes.com
 Description: A simple WordPress plugin to modify WPLMS navs template
-Version: 1.1
+Version: 1.0
 Author: VibeThemes
 Author URI: http://www.vibethemes.com
 License: GPL2
@@ -41,23 +41,7 @@ if(class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
     register_deactivation_hook(__FILE__, array('WPLMS_Course_Custom_Nav_Plugin_Class', 'deactivate'));
 }
 
-//autoupdate:
 
-add_action( 'init', 'wplms_course_custom_nav_update' );
-function wplms_course_custom_nav_update() {
-	/* Load Plugin Updater */
-	require_once( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'autoupdate/class-plugin-update.php' );
-	/* Updater Config */
-	$config = array(
-		'base'      => plugin_basename( __FILE__ ), //required
-		'dashboard' => true,
-		'repo_uri'  => 'http://www.vibethemes.com/',  //required
-		'repo_slug' => 'wplms-ccn',  //required
-	);
-
-	/* Load Updater Class */
-	new WPLMS_Course_Custom_Nav_Plugin_Class( $config );
-}
 
 
 

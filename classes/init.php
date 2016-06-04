@@ -2,7 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
-if(!class_exists('WPLMS_Course_Custom_Sections'))
+if(!class_exists('WPLMS_Course_Custom_Sections') && class_exists('Vibe_CustomTypes_Permalinks'))
 {   
     class WPLMS_Course_Custom_Sections  // We'll use this just to avoid function name conflicts 
     {
@@ -131,8 +131,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     	}
     	
     	function permalink_setting_course_navs(){
-    		if(!class_exists('Vibe_CustomTypes_Permalinks'))
-    			return;
+
     		$p = Vibe_CustomTypes_Permalinks::init();
     		$permalinks = $p->permalinks;
 
@@ -227,11 +226,12 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 		}
 
 	    function add_custom_section_metabox_backend($settings){
-
-	    	global $post;
+	    	if(!isset($_GET['post']) || empty($_GET['post']))
+	    		return $settings;
+	    	$post_id = $_GET['post'];
 	    	foreach($this->custom_section as $section){
 	    		$courses=explode(',',$section->courses);
-	    		if((isset($section->courses) && in_array($post->ID,$courses)) ||(isset($section->courses) && $section->all_courses=='1')){
+	    		if((isset($section->courses) && in_array($post_id,$courses)) ||(isset($section->courses) && $section->all_courses=='1')){
 	    			$id='vibe_'.str_replace('-', '_', $section->slug);
 	    			$settings[$id]=array(
 					'label'	=> $section->title,
@@ -291,7 +291,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 						$user_id = get_current_user_id();
 						$course_id = get_the_ID();
 						if(function_exists('wplms_user_course_check')){
-							if(is_user_logged_in() && wplms_user_course_check($user_id,$course_id) || (is_user_logged_in() && current_user_can('edit_posts')))
+							if(is_user_logged_in() && wplms_user_course_check($user_id,$course_id))
 							$check=1;
 						}
 						break;
@@ -299,7 +299,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 						$user_id = get_current_user_id();
 						$course_id = get_the_ID();
 						if(function_exists('wplms_user_course_active_check')){
-							if(is_user_logged_in() && wplms_user_course_active_check($user_id,$course_id) || (is_user_logged_in() && current_user_can('edit_posts')))
+							if(is_user_logged_in() && wplms_user_course_active_check($user_id,$course_id))
 							$check=1;
 						}
 						break;
@@ -375,9 +375,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 		
 
     }//class WPLMS_Course_Custom_Sections ends here
-add_action('init',function(){WPLMS_Course_Custom_Sections::init();},1);
 
+WPLMS_Course_Custom_Sections::init();
 }
-
-
 
