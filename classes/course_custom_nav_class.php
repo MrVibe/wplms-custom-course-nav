@@ -18,14 +18,28 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
             add_action('admin_menu',array($this,'init_wplms_course_nav_settings'));
 
             add_action('admin_enqueue_scripts',array($this,'enqueue_custom_js'));
+            add_action('admin_print_scripts-lms_page_wplms-course-custom-nav',array($this,'remove_badge_os_scripts'));
+            add_action('admin_print_styles-lms_page_wplms-course-custom-nav',array($this,'remove_badge_os_scripts'));
+
             add_action('wp_ajax_save_custom_course_sections',array($this,'save_custom_course_sections'));
             add_action('wp_ajax_save_custom_course_creation',array($this,'save_custom_course_creation'));
         }
 
-        function enqueue_custom_js($hook){
+        function remove_badge_os_scripts(){
+             if(in_array( 'badgeos/badgeos.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) || (function_exists('is_plugin_active') && is_plugin_active( 'badgeos/badgeos.php'))){
+                wp_deregister_script('badgeos-select2');
+                wp_dequeue_script('badgeos-select2');
+                wp_deregister_script('select2');
+                wp_dequeue_script('select2');
+                wp_dequeue_style('badgeos-select2-css');
+                wp_deregister_style('badgeos-select2-css');
+            }
+        }
 
-            if($hook != 'lms_page_wplms-course-custom-nav')
+        function enqueue_custom_js($hook){
+            if($hook != 'lms_page_wplms-course-custom-nav'){
                 return;
+            }
 
             wp_enqueue_script('customselect2',VIBE_PLUGIN_URL.'/vibe-customtypes/metaboxes/js/select2.min.js');
             wp_enqueue_style('customselect2',VIBE_PLUGIN_URL.'/vibe-customtypes/metaboxes/css/select2.min.css');
