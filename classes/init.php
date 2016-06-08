@@ -226,15 +226,21 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 			}
 		}
 
+		
 	    function add_custom_section_metabox_backend($settings){
-
-	    	global $post;
-	    	if(!isset($this->custom_section) || empty($this->custom_section))
+	    	
+	    	if(!isset($this->custom_section) || empty($this->custom_section)){
 	    		return $settings;
+	    	}
+	    	$post_id='';
+	    	if(isset($_GET['post'])){
+	    		$post_id = $_GET['post'];
+	    	}
 	    	foreach($this->custom_section as $section){
 	    		$courses=explode(',',$section->courses);
-	    		if((isset($section->courses) && in_array($post->ID,$courses)) ||(isset($section->courses) && $section->all_courses=='1')){
+	    		if((isset($section->courses) && !empty($post_id) && in_array($post_id,$courses)) ||(isset($section->all_courses) && $section->all_courses=='1')){
 	    			$id='vibe_'.str_replace('-', '_', $section->slug);
+​
 	    			$settings[$id]=array(
 					'label'	=> $section->title,
 					'desc'	=> $section->description,
