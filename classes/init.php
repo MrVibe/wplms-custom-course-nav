@@ -240,7 +240,6 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 	    		$courses=explode(',',$section->courses);
 	    		if((isset($section->courses) && !empty($post_id) && in_array($post_id,$courses)) ||(isset($section->all_courses) && $section->all_courses=='1')){
 	    			$id='vibe_'.str_replace('-', '_', $section->slug);
-​
 	    			$settings[$id]=array(
 					'label'	=> $section->title,
 					'desc'	=> $section->description,
