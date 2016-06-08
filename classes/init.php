@@ -229,6 +229,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 	    function add_custom_section_metabox_backend($settings){
 
 	    	global $post;
+	    	if(!isset($this->custom_section) || empty($this->custom_section))
+	    		return $settings;
 	    	foreach($this->custom_section as $section){
 	    		$courses=explode(',',$section->courses);
 	    		if((isset($section->courses) && in_array($post->ID,$courses)) ||(isset($section->courses) && $section->all_courses=='1')){
