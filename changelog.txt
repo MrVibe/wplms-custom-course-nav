@@ -1,0 +1,28 @@
+* syntax error fix
+* version1.2
+* Fix for new post settings
+* empty check for saved settings fix
+* fixes with badgeOs
+* last commit
+* last commit
+* last commit
+* Add course students in visibility
+* Some Bug Fixes
+* another bug fix
+* bug fix
+* section content visibility issues fixes
+* admin check for setting defaults
+* comments removed
+* save post meta if hidden
+* little changes
+* localizations
+* slug validation added
+* fixes
+* defaults values feature
+* edit section completed
+* edit sections
+* Showing selected courses in edit section remaining
+* edit section remaining
+* no message
+* GPLv2 setting the correct License.
+* first commit

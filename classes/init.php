@@ -133,6 +133,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     	function permalink_setting_course_navs(){
     		if(!class_exists('Vibe_CustomTypes_Permalinks'))
     			return;
+    		if(empty($this->custom_section))
+    			return;
     		$p = Vibe_CustomTypes_Permalinks::init();
     		$permalinks = $p->permalinks;
 
@@ -153,7 +155,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 	    }
 
 	    function save_permalinks_course_navs($permalinks){
-
+	    	if(empty($this->custom_section))
+	    		return $permalinks;
 	        foreach($this->custom_section as $section){
 		        if(!empty($_POST[$section->slug.'_slug'])){
 		            $custom_slug = trim( sanitize_text_field( $_POST[$section->slug.'_slug'] ), '/' );
@@ -200,11 +203,9 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 
 
 		function catch_vars_course_navs(){ 
-			global $bp,$wp_query;	
-			
 			if(empty($this->custom_section))
 				return;
-
+			global $bp,$wp_query;	
 			$p = Vibe_CustomTypes_Permalinks::init();
     		$permalinks = $p->permalinks;
 
@@ -253,10 +254,10 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 	    }
 
 	    function add_custom_section_metabox_frontend($settings){
+	    	if(empty($this->custom_section))
+    			return $settings;
 	    	$fields = $settings['course_settings']['fields'];
     		$post_id = $_GET['action'];
-    		if(empty($this->custom_section))
-    			return $settings;
 	    	foreach($this->custom_section as $section){
 	    		$courses=explode(',',$section->courses);
 	    		if((isset($section->courses) && in_array($post_id,$courses)) ||(isset($section->courses) && $section->all_courses=='1')){
