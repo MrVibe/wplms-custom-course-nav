@@ -117,7 +117,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     					if(!empty($this->course_creation[$i]['fields'][$j]['default'])){
 							$settings[$key]['fields'][$j]['default'] = $this->course_creation[$i]['fields'][$j]['default'];
 						}
-    					if($this->course_creation[$i]['fields'][$j]['visibility']==0){
+    					if($this->course_creation[$i]['fields'][$j]['visibility']==0 && $this->course_creation[$i]['fields'][$j]['field'] == $settings[$key]['fields'][$j]['id']){
     						if($settings[$key]['fields'][$j]['type']!='button'){
 
     							unset($settings[$key]['fields'][$j]);
