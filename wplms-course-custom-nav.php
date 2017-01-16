@@ -29,10 +29,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 if ( ! defined( 'ABSPATH' ) ) {
   exit;
 }
-
+if ( in_array( 'vibe-customtypes/vibe-customtypes.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) && in_array( 'vibe-course-module/loader.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 include_once 'classes/course_custom_nav_class.php';
 include_once 'classes/init.php';
-
+}
 
 if(class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
 {	

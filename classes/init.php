@@ -38,7 +38,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 			add_action('wplms_front_end_save_course_settings',array($this,'save_course_settings_defaults_frontend'),99);
     	}
     	function save_course_settings_defaults_frontend($post_id){
-    		if(empty($this->course_creation))
+    		if(empty($this->course_creation) || !class_exists('WPLMS_Front_End_Fields'))
     			return;
     		if(current_user_can('manage_options'))
     			return;
@@ -53,7 +53,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 
 
     	function save_course_pricng_defaults_frontend($post_id){
-    		if(empty($this->course_creation))
+    		if(empty($this->course_creation) || !class_exists('WPLMS_Front_End_Fields'))
     			return;
     		if(current_user_can('manage_options'))
     			return;
@@ -133,7 +133,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     	function permalink_setting_course_navs(){
     		if(!class_exists('Vibe_CustomTypes_Permalinks'))
     			return;
-    		if(empty($this->custom_section))
+    		if(empty($this->custom_section)  || !class_exists('Vibe_CustomTypes_Permalinks'))
     			return;
     		$p = Vibe_CustomTypes_Permalinks::init();
     		$permalinks = $p->permalinks;
@@ -169,7 +169,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 
 	    function add_endpoints_course_navs(){
 
-	    	if(empty($this->custom_section))
+	    	if(empty($this->custom_section)  || !class_exists('Vibe_CustomTypes_Permalinks'))
 	    		return ;
 
 	    	$p = Vibe_CustomTypes_Permalinks::init();
@@ -184,7 +184,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 
 	    function filter_request_course_navs( $vars ){
 
-	    	if(empty($this->custom_section))
+	    	if(empty($this->custom_section)  || !class_exists('Vibe_CustomTypes_Permalinks'))
 	    		return $vars;
 
 	    	$p = Vibe_CustomTypes_Permalinks::init();
@@ -203,7 +203,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 
 
 		function catch_vars_course_navs(){ 
-			if(empty($this->custom_section))
+			if(empty($this->custom_section)  || !class_exists('Vibe_CustomTypes_Permalinks'))
 				return;
 			global $bp,$wp_query;	
 			$p = Vibe_CustomTypes_Permalinks::init();
@@ -330,12 +330,11 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 
     	function wplms_custom_section_link($nav){
    
-    		if(empty($this->custom_section))
+    		if(empty($this->custom_section) || !class_exists('Vibe_CustomTypes_Permalinks'))
     			return $nav;
     		
     		global $post;
     		$course_id = $post->ID;
-
     		$p = Vibe_CustomTypes_Permalinks::init();
     		$permalinks = $p->permalinks;
     		$courses=array();
