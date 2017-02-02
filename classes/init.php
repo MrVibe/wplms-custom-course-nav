@@ -234,9 +234,12 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 	    		return $settings;
 	    	}
 	    	$post_id='';
-	    	if(isset($_GET['post'])){
-	    		$post_id = $_GET['post'];
-	    	}
+	    	if(!empty($_POST) && !empty($_POST['post_ID'])){
+				$post_id = $_POST['post_ID'];
+			}
+			elseif(isset($_GET['post'])){
+				$post_id = $_GET['post'];
+			}
 	    	foreach($this->custom_section as $section){
 	    		$courses=explode(',',$section->courses);
 	    		if((isset($section->courses) && !empty($post_id) && in_array($post_id,$courses)) ||(isset($section->all_courses) && $section->all_courses=='1')){
