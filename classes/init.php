@@ -15,6 +15,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     	function __construct(){
     		 $this->course_creation = get_option('custom_course_creation');
     		 $this->custom_section = get_option('custom_course_sections');
+    		 $this->wplms_course_tabs_tabs_array = '';
 
     		add_filter('wplms_course_metabox',array($this,'custom_course_creation_settings'),999);
     		add_filter('wplms_course_product_metabox',array($this,'custom_course_creation_settings'),999);
@@ -36,7 +37,122 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 			add_action('save_post',array($this,'save_hidden_post_meta'));
 			add_action('wplms_front_end_save_course_pricing',array($this,'save_course_pricng_defaults_frontend'),99);
 			add_action('wplms_front_end_save_course_settings',array($this,'save_course_settings_defaults_frontend'),99);
+
+
+			//custom sections in tabbed course layout 
+			add_action('bp_before_course_header',array($this,'wplms_course_tabs_supports_custom_sections'),9999);
     	}
+
+    	function wplms_course_tabs_supports_custom_sections(){
+			global $post;
+	    	$layouts = array('c5','c4','c3','c2');
+	    	$layout = vibe_get_customizer('course_layout');
+	    	$tab_style_course_layout = vibe_get_option('tab_style_course_layout');
+	    	
+	    	if(!empty($layout) && in_array($layout,$layouts) && !empty($tab_style_course_layout)){
+	    		$this->wplms_course_tabs_tabs_array = apply_filters('course_tabs_array',array(_x('home','custom tabs for tabbed layout','vibe'),_x('curriculum','custom tabs for tabbed layout','vibe')));
+
+				if($post->comment_status == 'open'){
+					if(!empty($this->wplms_course_tabs_tabs_array) && is_array($this->wplms_course_tabs_tabs_array))
+						$this->wplms_course_tabs_tabs_array[] = _x('reviews','custom tabs for tabbed layout','vibe');
+				}
+	    		remove_filter('wplms_course_nav_menu',array($this,'wplms_custom_section_link'));
+				add_filter('wplms_course_nav_menu',array($this,'wplms_course_tabs_link_custom_sections'),99);
+				add_filter('vibe_course_permalinks',array($this,'add_wplms_course_tabs_in_saved_permalinks_custom_sections'),9999999);
+
+				
+			}
+	    }
+	    function add_wplms_course_tabs_in_saved_permalinks_custom_sections($permalinks){
+	    	if(empty($this->custom_section))
+	    		return $permalinks;
+	    	if(!empty($this->custom_section)){
+	    		foreach ($this->custom_section as $section) {
+		    		if(!empty($section->slug)){
+		    			$section_slug = isset($permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug;
+		    			$section_slug = str_replace('/','',$section_slug);
+		    			$permalinks[$section->slug.'_slug']=str_replace('/','#course-',$section_slug);
+		    		}
+		    	}
+	    	}
+	    	return $permalinks;
+	    }
+	    function wplms_course_tabs_link_custom_sections($nav){
+	    	if(empty($this->custom_section))
+	    		return $nav;
+	    	$tabs = $this->wplms_course_tabs_tabs_array;
+			$temp = $nav;
+			if(!empty($temp['curriculum']))
+			unset($temp['curriculum']);
+			unset($nav);
+			foreach($tabs as $tab){
+				$nav[$tab] = array(
+		                'id' => $tab,
+		                'label'=>strtoupper($tab),
+		                'action' => '#course-'.$tab,
+		                'link'=>bp_get_course_permalink(),
+		            	);	
+			}
+			if(class_exists('Vibe_CustomTypes_Permalinks')){
+				$p = Vibe_CustomTypes_Permalinks::init();
+		    	$permalinks = $p->permalinks;
+		    	if(!empty($this->custom_section) && is_array($this->custom_section)){
+		    		global $post;
+					foreach ($this->custom_section as $section) {
+						$courses=explode(',',$section->courses);
+
+		    			$check=$this->check_visibility($section->visibility);
+		    			if(((isset($section->courses) && in_array($post->ID,$courses))  ||  $section->all_courses=='1') && $check){
+		    					$section_slug = isset($permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug;
+		    					$section_slug = str_replace('/','',$section_slug);
+
+		    					$content=get_post_meta($post->ID,'vibe_'.str_replace('-','_',$section->slug),true);
+		    					if(!empty($content)){
+		    						$nav[$section->slug] = array(
+						                    'id' => $section->slug,
+						                    'label'=>$section->title,
+						                    'action' => '#course-'.$section_slug,
+						                    'can_view'=> $check,
+						                    'link'=>bp_get_course_permalink(),
+						                	);
+						    		add_action('wplms_after_course_description',function() use ( $section ) { 
+		               				$this->custom_section_wplms_course_tabs_below_description( $section ); }); 
+		    					}
+						    	
+						 }
+					}
+				}
+			}
+			foreach ($temp as $key => $value) {
+				if($key != '')
+				$nav[$key] = $value;
+			}
+			return $nav;
+	    }
+
+	    function custom_section_wplms_course_tabs_below_description($section){
+			if(empty($section))
+				return;
+			global $post;
+			$course_id = $post->ID;
+			$p = Vibe_CustomTypes_Permalinks::init();
+	    	$permalinks = $p->permalinks;
+			$courses=explode(',',$section->courses);
+			if(!empty($section)){
+				$check=$this->check_visibility($section->visibility);
+			}
+
+			if(((isset($section->courses) && in_array($course_id,$courses))  ||  $section->all_courses=='1') && $check){
+				 $section_slug = ($permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug;
+				 $section_slug = str_replace('/','',$section_slug);
+				 $content=get_post_meta($post->ID,'vibe_'.str_replace('-','_',$section->slug),true);
+				 if(!empty($content) || $content != ''){
+					echo '<div id="course-'.$section_slug.'"><h3 class="heading"><span>'.$section->title.'</span></h3></div>';
+	    			echo  apply_filters('the_content',$content);
+				}
+			}
+		}
+
     	function save_course_settings_defaults_frontend($post_id){
     		if(empty($this->course_creation) || !class_exists('WPLMS_Front_End_Fields'))
     			return;
@@ -387,6 +503,3 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 add_action('init',function(){WPLMS_Course_Custom_Sections::init();},1);
 
 }
-
-
-
