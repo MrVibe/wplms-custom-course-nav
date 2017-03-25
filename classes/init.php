@@ -47,17 +47,19 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 			global $post;
 	    	$layouts = array('c5','c4','c3','c2');
 	    	$layout = vibe_get_customizer('course_layout');
-	    	$tab_style_course_layout = vibe_get_option('tab_style_course_layout');
+	    	$tab_style_course_layout = '';
+	    	if(function_exists('vibe_get_option')){
+	    		$tab_style_course_layout = vibe_get_option('tab_style_course_layout');
+	    	}
 	    	
 	    	if(!empty($layout) && in_array($layout,$layouts) && !empty($tab_style_course_layout)){
-	    		$this->wplms_course_tabs_tabs_array = apply_filters('course_tabs_array',array(_x('home','custom tabs for tabbed layout','vibe'),_x('curriculum','custom tabs for tabbed layout','vibe')));
+	    		$this->wplms_course_tabs_tabs_array = apply_filters('course_tabs_array',array(
+    			'home' => _x('home','custom tabs for tabbed layout','vibe'),
+    			'curriculum' => _x('curriculum','custom tabs for tabbed layout','vibe')
+    			));
 
-				if($post->comment_status == 'open'){
-					if(!empty($this->wplms_course_tabs_tabs_array) && is_array($this->wplms_course_tabs_tabs_array))
-						$this->wplms_course_tabs_tabs_array[] = _x('reviews','custom tabs for tabbed layout','vibe');
-				}
 	    		remove_filter('wplms_course_nav_menu',array($this,'wplms_custom_section_link'));
-				add_filter('wplms_course_nav_menu',array($this,'wplms_course_tabs_link_custom_sections'),99);
+				add_filter('wplms_course_nav_menu',array($this,'wplms_course_tabs_link_custom_sections'),9999);
 				add_filter('vibe_course_permalinks',array($this,'add_wplms_course_tabs_in_saved_permalinks_custom_sections'),9999999);
 
 				
@@ -80,24 +82,28 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 	    function wplms_course_tabs_link_custom_sections($nav){
 	    	if(empty($this->custom_section))
 	    		return $nav;
+	    	global $post;
 	    	$tabs = $this->wplms_course_tabs_tabs_array;
+	    	if(!empty($nav['reviews']))
+			    unset($nav['reviews']);
 			$temp = $nav;
 			if(!empty($temp['curriculum']))
-			unset($temp['curriculum']);
+				unset($temp['curriculum']);
+			if(!empty($tabs['reviews']))
+			    unset($tabs['reviews']);
 			unset($nav);
-			foreach($tabs as $tab){
+			foreach($tabs as $key => $tab){
 				$nav[$tab] = array(
-		                'id' => $tab,
-		                'label'=>strtoupper($tab),
-		                'action' => '#course-'.$tab,
-		                'link'=>bp_get_course_permalink(),
-		            	);	
+	                'id' => $key,
+	                'label'=>$tab,
+	                'action' => '#course-'.strtolower($key),
+	                'link'=>bp_get_course_permalink(),
+	            	);	
 			}
 			if(class_exists('Vibe_CustomTypes_Permalinks')){
 				$p = Vibe_CustomTypes_Permalinks::init();
 		    	$permalinks = $p->permalinks;
 		    	if(!empty($this->custom_section) && is_array($this->custom_section)){
-		    		global $post;
 					foreach ($this->custom_section as $section) {
 						$courses=explode(',',$section->courses);
 
@@ -123,6 +129,15 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 					}
 				}
 			}
+			//handle reviews tab : 
+			if($post->comment_status == 'open'){
+			    $nav['reviews'] = array(
+			      'id' => 'reviews',
+			      'label'=>_x('reviews','custom tabs for tabbed layout','vibe'),
+			      'action' => '#course-reviews',
+			      'link'=>bp_get_course_permalink(),
+			    );
+		    }
 			foreach ($temp as $key => $value) {
 				if($key != '')
 				$nav[$key] = $value;
