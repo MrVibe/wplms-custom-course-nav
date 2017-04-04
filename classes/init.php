@@ -223,7 +223,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     					if($s_key==$f_value['field']  && !empty($f_value['default'])){
 							$settings[$s_key]['std'] = $f_value['default'];
 						}
-			 			if($s_key==$f_value['field']  && $f_value['visibility']=='0'){
+			 			if($s_key==$f_value['field']  && $f_value['visibility']=='0' && !empty($s_key)){
 			 				unset($settings[$s_key]);
 			 			}
 			 		}
