@@ -57,7 +57,10 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     			'home' => _x('home','custom tabs for tabbed layout','vibe'),
     			'curriculum' => _x('curriculum','custom tabs for tabbed layout','vibe')
     			));
-
+	    		if($post->comment_status == 'open'){
+					if(!empty($this->wplms_course_tabs_tabs_array) && is_array($this->wplms_course_tabs_tabs_array))
+						$this->wplms_course_tabs_tabs_array['reviews'] = _x('reviews','custom tabs for tabbed layout','vibe');
+				}
 	    		remove_filter('wplms_course_nav_menu',array($this,'wplms_custom_section_link'));
 				add_filter('wplms_course_nav_menu',array($this,'wplms_course_tabs_link_custom_sections'),9999);
 				add_filter('vibe_course_permalinks',array($this,'add_wplms_course_tabs_in_saved_permalinks_custom_sections'),9999999);
@@ -84,16 +87,13 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 	    		return $nav;
 	    	global $post;
 	    	$tabs = $this->wplms_course_tabs_tabs_array;
-	    	if(!empty($nav['reviews']))
-			    unset($nav['reviews']);
+	    	
 			$temp = $nav;
-			if(!empty($temp['curriculum']))
-				unset($temp['curriculum']);
-			if(!empty($tabs['reviews']))
-			    unset($tabs['reviews']);
+			
 			unset($nav);
 			foreach($tabs as $key => $tab){
-				$nav[$tab] = array(
+				unset($temp[$key]);
+				$nav[$key] = array(
 	                'id' => $key,
 	                'label'=>$tab,
 	                'action' => '#course-'.strtolower($key),
@@ -129,15 +129,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 					}
 				}
 			}
-			//handle reviews tab : 
-			if($post->comment_status == 'open'){
-			    $nav['reviews'] = array(
-			      'id' => 'reviews',
-			      'label'=>_x('reviews','custom tabs for tabbed layout','vibe'),
-			      'action' => '#course-reviews',
-			      'link'=>bp_get_course_permalink(),
-			    );
-		    }
+			
 			foreach ($temp as $key => $value) {
 				if($key != '')
 				$nav[$key] = $value;
