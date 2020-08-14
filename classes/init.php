@@ -395,7 +395,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 				        'type'  => 'editor', // type of field
 				        'std'   => ''
 				       	));
-					 array_splice($fields, (count($fields)-1), 0,$arr );
+					 array_splice($fields, (count($fields)-2), 0,$arr );
 					 $settings['course_settings']['fields'] = $fields;
 	    		}
 	    	}

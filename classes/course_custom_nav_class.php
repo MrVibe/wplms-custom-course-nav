@@ -15,7 +15,7 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
         }
         public function __construct(){
             
-            add_action('admin_menu',array($this,'init_wplms_course_nav_settings'));
+            add_action('admin_menu',array($this,'init_wplms_course_nav_settings'),11);
 
             add_action('admin_enqueue_scripts',array($this,'enqueue_custom_js'));
             add_action('admin_print_scripts-lms_page_wplms-course-custom-nav',array($this,'remove_badge_os_scripts'));
@@ -40,9 +40,15 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
             if($hook != 'lms_page_wplms-course-custom-nav'){
                 return;
             }
-
-            wp_enqueue_script('customselect2',VIBE_PLUGIN_URL.'/vibe-customtypes/metaboxes/js/select2.min.js');
-            wp_enqueue_style('customselect2',VIBE_PLUGIN_URL.'/vibe-customtypes/metaboxes/css/select2.min.css');
+            if(defined('WPLMS_PLUGIN_INCLUDES_URL')){
+                
+                wp_enqueue_script('customselect2',WPLMS_PLUGIN_INCLUDES_URL.'/vibe-customtypes/metaboxes/js/select2.min.js');
+                wp_enqueue_style('customselect2',WPLMS_PLUGIN_INCLUDES_URL.'/vibe-customtypes/metaboxes/css/select2.min.css');
+            }else{
+                wp_enqueue_script('customselect2',VIBE_PLUGIN_URL.'/vibe-customtypes/metaboxes/js/select2.min.js');
+                wp_enqueue_style('customselect2',VIBE_PLUGIN_URL.'/vibe-customtypes/metaboxes/css/select2.min.css');
+            }
+            
             wp_enqueue_script('wplms_course_custom_nav_js',plugins_url('../js/custom.js',__FILE__),array('jquery','jquery-ui-sortable'));
             $translation_array=array(
                 'permalinks_save_notice' => sprintf(_x('Please re-save permalinks, %s link %s','notice shown to users on creating/editing new sections','wplms-ccn'),'<a href="'.admin_url('options-permalink.php').'">','</a>'),
@@ -57,7 +63,10 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
             wp_enqueue_style('wplms_course_custom_nav_css',plugins_url('../css/custom.css',__FILE__));
         }
         function init_wplms_course_nav_settings(){
+
+
             add_submenu_page('lms',__('Course custom nav settings','wplms-ccn'),__('Course Navigation','wplms-ccn'),'manage_options','wplms-course-custom-nav',array($this,'settings'));  
+
             $this->custom_sections = get_option('custom_course_sections');
             $this->course_creation = get_option('custom_course_creation');
         }
