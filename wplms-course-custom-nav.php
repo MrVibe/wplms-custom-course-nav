@@ -46,22 +46,22 @@ if(class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
 
 //autoupdate:
 
-add_action( 'init', 'wplms_course_custom_nav_update' );
-function wplms_course_custom_nav_update() {
-	/* Load Plugin Updater */
-	require_once( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'autoupdate/class-plugin-update.php' );
-	/* Updater Config */
-	$config = array(
-		'base'      => plugin_basename( __FILE__ ), //required
-		'dashboard' => true,
-		'repo_uri'  => 'http://www.vibethemes.com/',  //required
-		'repo_slug' => 'wplms-ccn',  //required
-	);
+add_action( 'admin_init', 'vwplms_course_custom_nav_plugin_update' );
+function vwplms_course_custom_nav_plugin_update() {
+    /* Load Plugin Updater */
+    require_once( trailingslashit( plugin_dir_path( __FILE__ ) ) . 'classes/autoupdate.php' );
 
-	/* Load Updater Class */
-	new WPLMS_Course_Custom_Nav_Plugin_Class_Update( $config );
+    /* Updater Config */
+    $config = array(
+        'base'      => plugin_basename( __FILE__ ), //required
+        'dashboard' => true,
+        'repo_uri'  => 'https://wplms.io/',  //required
+        'repo_slug' => 'wplms-custom-course-nav',  //required
+    );
+
+    /* Load Updater Class */
+    new WPLMS_Course_Custom_Nav_Auto_Update( $config );
 }
-
 
 
 
