@@ -122,8 +122,14 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
         }
 
         function course_creation(){
-          $fields = WPLMS_Front_End_Fields::init();
-          $settings = $fields->tabs();
+            if(function_exists('get_wplms_create_course_tabs')){
+                $settings = get_wplms_create_course_tabs();
+            }else{
+                
+                $fields = WPLMS_Front_End_Fields::init();
+                $settings = $fields->tabs();
+            }
+          
           $i=0;
           foreach ($settings as $key => $value) {
             

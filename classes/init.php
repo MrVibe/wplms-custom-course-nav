@@ -41,6 +41,57 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 
 			//custom sections in tabbed course layout 
 			add_action('bp_before_course_header',array($this,'wplms_course_tabs_supports_custom_sections'),9999);
+
+
+			add_action('wplms_front_end_field_saved',array($this,'save_4_0_fields_default'),10,2);
+			add_filter('wplms_course_info_display_options',array($this,'wplms_4_0_info_options'));
+			add_action('wplms_course_info_content',array($this,'wplms_4_0_info_content'),10,2);
+    	}
+
+    	function wplms_4_0_info_content($course_id,$field_id){
+    		if(empty($this->custom_section))
+				return;
+			$action = $field_id;
+			$section = null;
+			foreach($this->custom_section  as $key => $sec){
+				if($sec->slug == $action){
+					$section = $this->custom_section[$key] ;
+					break;
+				}
+			}
+			$courses=explode(',',$section->courses);
+			$check=$this->check_visibility($section->visibility);
+			if( !empty($section) && ((isset($section->courses) && in_array($course_id,$courses))  ||  $section->all_courses=='1') && $check && $action == $section->slug){
+				$content=get_post_meta($course_id,'vibe_'.str_replace('-','_',$section->slug),true);
+	    		echo  do_shortcode($content);
+    		}
+    	}
+
+    	function wplms_4_0_info_options($options){
+    		if(!empty($this->custom_section)){
+    			foreach ($this->custom_section as $section) {
+		    		if(!empty($section->slug)){
+
+
+		    			$options[$section->slug] = $section->title;
+		    		}
+		    	}
+    		}
+    		
+
+    		
+    		return $options;
+    	}
+
+    	function save_4_0_fields_default($id,$args){
+    		if(function_exists('get_wplms_create_course_tabs')){
+            
+	    		foreach($this->course_creation[0]['fields'] as  $value){
+	    			if($value['visibility']=='0' && !empty($value['default']) && get_post_type($id)=='course'){
+	    				update_post_meta($id,$value['field'],$value['default']);
+	    			}
+	    		}
+    		}
     	}
 
     	function wplms_course_tabs_supports_custom_sections(){
@@ -165,8 +216,13 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     			return;
     		if(current_user_can('manage_options'))
     			return;
-    		$tabs=WPLMS_Front_End_Fields::init();
-    		$settings=$tabs->tabs();
+    		 if(function_exists('get_wplms_create_course_tabs')){
+                $settings = get_wplms_create_course_tabs();
+            }else{
+                
+                $fields = WPLMS_Front_End_Fields::init();
+                $settings = $fields->tabs();
+            }
     		foreach($this->course_creation[0]['fields'] as  $value){
     			if($value['visibility']=='0' && !empty($value['default']) && get_post_type($post_id)=='course'){
     				update_post_meta($post_id,$value['field'],$value['default']);
@@ -180,8 +236,13 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     			return;
     		if(current_user_can('manage_options'))
     			return;
-    		$tabs=WPLMS_Front_End_Fields::init();
-    		$settings=$tabs->tabs();
+    		if(function_exists('get_wplms_create_course_tabs')){
+                $settings = get_wplms_create_course_tabs();
+            }else{
+                
+                $fields = WPLMS_Front_End_Fields::init();
+                $settings = $fields->tabs();
+            }
     		foreach($this->course_creation[3]['fields'] as  $value){
     			if($value['visibility']=='0' && !empty($value['default']) && get_post_type($post_id)=='course'){
     				update_post_meta($post_id,$value['field'],$value['default']);
@@ -393,7 +454,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 				        'desc'  => $section->description, // description
 				        'id'  => $id, // field id and name
 				        'type'  => 'editor', // type of field
-				        'std'   => ''
+				        'std'   => '',
+				        'from' => 'meta',
 				       	));
 					 array_splice($fields, (count($fields)-2), 0,$arr );
 					 $settings['course_settings']['fields'] = $fields;
@@ -491,15 +553,16 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 			if(empty($action)){
 				$action = $_GET['action'];
 			}
-
-			foreach($this->custom_section as $section){
-				if($section->slug == $action){
+			$section = null;
+			foreach($this->custom_section  as $key => $sec){
+				if($sec->slug == $action){
+					$section = $this->custom_section[$key] ;
 					break;
 				}
 			}
 			$courses=explode(',',$section->courses);
 			$check=$this->check_visibility($section->visibility);
-			if(((isset($section->courses) && in_array($course_id,$courses))  ||  $section->all_courses=='1') && $check && $action == $section->slug){
+			if( !empty($section) && ((isset($section->courses) && in_array($course_id,$courses))  ||  $section->all_courses=='1') && $check && $action == $section->slug){
 				$content=get_post_meta(get_the_ID(),'vibe_'.str_replace('-','_',$section->slug),true);
 	    		echo  apply_filters('the_content',$content);
     		}
