@@ -295,7 +295,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     		foreach ($settings as $key => $value) {
     			if($key != 'create_course'){
     				if($this->course_creation[$i]['visibility']==0){
-    					unset($settings[$key]);
+    					//unset($settings[$key]);
+    					array_splice($settings, $key,1);
     				}
     				foreach($value['fields'] as $j=>$field){
     					if(!empty($this->course_creation[$i]['fields'][$j]['default'])){
@@ -303,8 +304,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 						}
     					if($this->course_creation[$i]['fields'][$j]['visibility']==0 && $this->course_creation[$i]['fields'][$j]['field'] == $settings[$key]['fields'][$j]['id']){
     						if($settings[$key]['fields'][$j]['type']!='button'){
-
-    							unset($settings[$key]['fields'][$j]);
+    							array_splice($settings[$key]['fields'], $j,1);
+    							//unset($settings[$key]['fields'][$j]);
     						}
     					}
     				}
