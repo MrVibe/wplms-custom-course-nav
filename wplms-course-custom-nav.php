@@ -3,7 +3,7 @@
 Plugin Name: WPLMS Course Custom Nav Plugin
 Plugin URI: http://www.Vibethemes.com
 Description: A simple WordPress plugin to modify WPLMS navs template
-Version: 1.5.2
+Version: 4.0
 Author: VibeThemes
 Author URI: http://www.vibethemes.com
 License: GPL2
