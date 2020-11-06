@@ -298,8 +298,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     			if($key != 'create_course'){
     				if($course_creation[$i]['visibility']==0){
     					//unset($settings[$key]);
-    					array_splice($settings, $key,1);
-    					array_splice($course_creation, $i,1);
+    					unset($settings[$key]);
+    					//array_splice($course_creation, $i,1);
 
     				}
     				foreach($value['fields'] as $j=>$field){
@@ -310,17 +310,23 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     						if($settings[$key]['fields'][$j]['type']!='button'){
     							//print($j.'#');print_r($field);
 
-    							array_splice($course_creation[$i]['fields'], $j,1);
+    							
 
-    							array_splice($settings[$key]['fields'], $j,1);
+    							unset($settings[$key]['fields'][$j]);
+    							//array_splice($course_creation[$i]['fields'], $j,1);
     							
     						}
     					}
     				}
     				$i++;
     			}
-    		}
 
+    		}
+    		foreach ($settings as $key => $value) {
+    			if(!empty($value['fields'])){
+    				$settings[$key]['fields'] = array_values($value['fields']);
+    			}
+    		}
     		return $settings;
     	}
     	
