@@ -19,7 +19,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 
     		add_filter('wplms_course_metabox',array($this,'custom_course_creation_settings'),999);
     		add_filter('wplms_course_product_metabox',array($this,'custom_course_creation_settings'),999);
-    		add_filter('wplms_course_creation_tabs',array($this,'course_creation_wplms_course_creation_tabs'),9999);
+    		add_filter('wplms_course_creation_tabs',array($this,'course_creation_wplms_course_creation_tabs'),9999,3);
     		
     		 /*===== Permalink Setting === */
 	        add_action('wplms_course_action_point_permalink_settings',array($this,'permalink_setting_course_navs'));
@@ -286,10 +286,12 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     		return $settings;
     	}
 
-    	function course_creation_wplms_course_creation_tabs($settings){
+    	function course_creation_wplms_course_creation_tabs($settings,$course_id=null,$user_id=null){
     		if(empty($this->course_creation))
     			return $settings;
     		if($_GET['page']=='wplms-course-custom-nav' || current_user_can('manage_options'))
+    			return $settings;
+    		if(!empty($user_id) && user_can($user_id,'manage_options')) 
     			return $settings;
     		$i=0;
     		$course_creation = $this->course_creation;
