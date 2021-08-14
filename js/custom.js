@@ -137,7 +137,7 @@
                 if(type == 'checkbox'){
                     default_val  = $(this).find('.post_field:checked').val();   
                 }
-                var field ={'field':$(this).attr('id'),'visibility':$(this).find('.course_field_label:checked').val(),'default':default_val};
+                var field ={'field':$(this).attr('id'),'visibility':$(this).find('.course_field_label:checked').val(),'default':default_val,required:$(this).find('.course_field_label_required:checked').val()};
                 fields.push(field);
             });
             section_fields={section: $this.find('h2.section').attr('id'),'visibility': section_visibility,'fields':fields};

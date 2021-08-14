@@ -137,18 +137,22 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
                 echo '<div class="section_wrapper">';
                 echo '<h2 class="section" id="'.$key.'">'.$value['title'];
                 echo '<span>'.__('Defaults','wplms-ccn').'</span>';
-                echo '<span><input type="radio" value="1" id="'.$key.'yes" class="course_section" name="'.$key.'" '.((!isset($this->course_creation[$i]['visibility']) || $this->course_creation[$i]['visibility'])?'CHECKED':'').' /><label for="'.$key.'yes">'.__('Show','wplms-ccn').'</label><input type="radio" value="0" name="'.$key.'" class="course_section" id="'.$key.'no" '.((empty($this->course_creation[$i]['visibility']) && isset($this->course_creation[$i]['visibility']))?'CHECKED':'').' /><label for="'.$key.'no">'.__('Hide','wplms-ccn').'</label></span></h2><ul id="'.$key.'" >';
+                echo '<span><input type="radio" value="1" id="'.$key.'yes" class="course_section" name="'.$key.'" '.((!isset($this->course_creation[$i]['visibility']) || $this->course_creation[$i]['visibility'])?'CHECKED':'').' /><label for="'.$key.'yes">'.__('Show','wplms-ccn').'</label><input type="radio" value="0" name="'.$key.'" class="course_section" id="'.$key.'no" '.((empty($this->course_creation[$i]['visibility']) && isset($this->course_creation[$i]['visibility']))?'CHECKED':'').' /><label for="'.$key.'no">'.__('Hide','wplms-ccn').'</label></span><label>'.__('(Required?)','wplms-ccn').'</label></h2><ul id="'.$key.'" >';
 
                 foreach($value['fields'] as $j=>$field){ 
                     if(!in_array($field['type'],array('button'))){
-                    echo '<li class="section_fields" id="'.$field['id'].'">'.$field['label'];
-                    echo '<span>';
-                    if(!empty($this->course_creation[$i]['fields'][$j]['default'])){
-                        $field['std'] = $field['value'] = $this->course_creation[$i]['fields'][$j]['default'];
-                    } 
-                    $this->generate_fields($field);
-                    echo '</span>';
-                    echo '<span><input type="radio" class="course_field_label" value="1" id="'.$field['id'].'yes" name="'.$field['id'].'" '.((!isset($this->course_creation[$i]['fields'][$j]['visibility']) || $this->course_creation[$i]['fields'][$j]['visibility'])?'CHECKED':'').' /><label for="'.$field['id'].'yes">'.__('Show','wplms-ccn').'</label><input type="radio" class="course_field_label" value="0" name="'.$field['id'].'" id="'.$field['id'].'no" '.((empty($this->course_creation[$i]['fields'][$j]['visibility']) && isset($this->course_creation[$i]['fields'][$j]['visibility']))?'CHECKED':'').'/><label for="'.$field['id'].'no">'.__('Hide','wplms-ccn').'</label></span></li>';
+                        echo '<li class="section_fields" id="'.$field['id'].'">'.$field['label'];
+                        echo '<span>';
+                        if(!empty($this->course_creation[$i]['fields'][$j]['default'])){
+                            $field['std'] = $field['value'] = $this->course_creation[$i]['fields'][$j]['default'];
+                        } 
+                        $this->generate_fields($field);
+                        echo '</span>';
+                        echo '<span><input type="radio" class="course_field_label" value="1" id="'.$field['id'].'yes" name="'.$field['id'].'" '.((!isset($this->course_creation[$i]['fields'][$j]['visibility']) || $this->course_creation[$i]['fields'][$j]['visibility'])?'CHECKED':'').' /><label for="'.$field['id'].'yes">'.__('Show','wplms-ccn').'</label><input type="radio" class="course_field_label" value="0" name="'.$field['id'].'" id="'.$field['id'].'no" '.((empty($this->course_creation[$i]['fields'][$j]['visibility']) && isset($this->course_creation[$i]['fields'][$j]['visibility']))?'CHECKED':'').'/><label for="'.$field['id'].'no">'.__('Hide','wplms-ccn').'</label></span>
+
+                        <label><input type="checkbox" value="1" class="course_field_label_required" '.( isset($this->course_creation[$i]['fields'][$j]['required'])?'CHECKED':'').'></label>
+
+                        </li>';
                     }
                 }
                 echo '</ul>';

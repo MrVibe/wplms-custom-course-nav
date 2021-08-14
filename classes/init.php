@@ -292,7 +292,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     		if($_GET['page']=='wplms-course-custom-nav' || current_user_can('manage_options'))
     			return $settings;
     		if(!empty($user_id) && user_can($user_id,'manage_options')) 
-    			return $settings;
+    			//return $settings;
     		$i=0;
     		$course_creation = $this->course_creation;
     		$section_keys  = $fields_keys = [];
@@ -300,7 +300,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     			if($key != 'create_course'){
     				if($course_creation[$i]['visibility']==0){
     					//unset($settings[$key]);
-    					unset($settings[$key]);
+    					$settings[$key]['hide'] = 1;
+    					//unset($settings[$key]);
     					//array_splice($course_creation, $i,1);
 
     				}
@@ -312,9 +313,20 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     						if($settings[$key]['fields'][$j]['type']!='button'){
     							//print($j.'#');print_r($field);
 
-    							
+    							$settings[$key]['fields'][$j]['hide'] = 1;
 
-    							unset($settings[$key]['fields'][$j]);
+    							//unset();
+    							//array_splice($course_creation[$i]['fields'], $j,1);
+    							
+    						}
+    					}
+    					if($course_creation[$i]['fields'][$j]['required']==1 && $course_creation[$i]['fields'][$j]['field'] == $settings[$key]['fields'][$j]['id']){
+    						if($settings[$key]['fields'][$j]['type']!='button'){
+    							//print($j.'#');print_r($field);
+
+    							$settings[$key]['fields'][$j]['required'] = 1;
+
+    							//unset();
     							//array_splice($course_creation[$i]['fields'], $j,1);
     							
     						}
@@ -323,11 +335,6 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     				$i++;
     			}
 
-    		}
-    		foreach ($settings as $key => $value) {
-    			if(!empty($value['fields'])){
-    				$settings[$key]['fields'] = array_values($value['fields']);
-    			}
     		}
     		return $settings;
     	}
