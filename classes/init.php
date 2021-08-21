@@ -268,7 +268,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     	function custom_course_creation_settings($settings){
     		if(empty($this->course_creation))
     			return $settings;
-    		if($_GET['page']=='wplms-course-custom-nav' || current_user_can('manage_options'))
+    		if(!empty($_GET['page']) && $_GET['page']=='wplms-course-custom-nav' || current_user_can('manage_options'))
     			return $settings;
     		foreach($this->course_creation as $cc_key => $cc_value){
     			foreach($cc_value['fields'] as $f_key => $f_value){
@@ -383,9 +383,9 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 
 	    	$p = Vibe_CustomTypes_Permalinks::init();
     		$permalinks = $p->permalinks;
-	        
+	       
 	        foreach($this->custom_section as $section){
-				$section_slug = ($permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug;
+				$section_slug = ((!empty($permalinks) && $permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug);
 				$section_slug = str_replace('/','',$section_slug);
 	        	add_rewrite_endpoint($section_slug, EP_ALL);    
 	        }
@@ -400,7 +400,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     		$permalinks = $p->permalinks;
 
     		foreach($this->custom_section as $section){
-				$section_slug = ($permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug;
+				$section_slug = ((!empty($permalinks) && $permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug);
 				$section_slug = str_replace('/','',$section_slug);
 				if(isset( $vars[$section_slug])){
 					$vars[$section_slug] = true;	
@@ -419,10 +419,10 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     		$permalinks = $p->permalinks;
 
 
-			if($bp->unfiltered_uri[0] == trim($permalinks['course_base'],'/') || $bp->unfiltered_uri[0] == BP_COURSE_SLUG){
+			if(!empty($permalinks) && $bp->unfiltered_uri[0] == trim($permalinks['course_base'],'/') || $bp->unfiltered_uri[0] == BP_COURSE_SLUG){
 					
 				foreach($this->custom_section as $section){
-					$section_slug = ($permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug;
+					$section_slug = ((!empty($permalinks) && $permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug);
 					$section_slug = str_replace('/','',$section_slug);
 					
 				    if( get_query_var( $section_slug )){ 
