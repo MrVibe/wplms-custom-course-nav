@@ -40,8 +40,8 @@ include_once 'classes/init.php';
 if(class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
 {	
     // Installation and uninstallation hooks
-    register_activation_hook(__FILE__, array('WPLMS_Course_Custom_Nav_Plugin_Class', 'activate'));
-    register_deactivation_hook(__FILE__, array('WPLMS_Course_Custom_Nav_Plugin_Class', 'deactivate'));
+    //register_activation_hook(__FILE__, array('WPLMS_Course_Custom_Nav_Plugin_Class', 'activate'));
+    //register_deactivation_hook(__FILE__, array('WPLMS_Course_Custom_Nav_Plugin_Class', 'deactivate'));
 }
 
 //autoupdate:
