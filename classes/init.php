@@ -201,7 +201,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 			}
 
 			if(((isset($section->courses) && in_array($course_id,$courses))  ||  $section->all_courses=='1') && $check){
-				 $section_slug = ($permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug;
+				 $section_slug = isset($permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug;
 				 $section_slug = str_replace('/','',$section_slug);
 				 $content=get_post_meta($post->ID,'vibe_'.str_replace('-','_',$section->slug),true);
 				 if(!empty($content) || $content != ''){
@@ -289,16 +289,19 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     	function course_creation_wplms_course_creation_tabs($settings,$course_id=null,$user_id=null){
     		if(empty($this->course_creation))
     			return $settings;
-    		if($_GET['page']=='wplms-course-custom-nav' || current_user_can('manage_options'))
+    		if(!empty($_GET['page']) && $_GET['page']=='wplms-course-custom-nav' || current_user_can(' manage_options'))
     			return $settings;
     		if(!empty($user_id) && user_can($user_id,'manage_options')) 
-    			//return $settings;
+    			return $settings;
     		$i=0;
     		$course_creation = $this->course_creation;
     		$section_keys  = $fields_keys = [];
+    		if(empty($course_creation)){
+    			return $settings;
+    		}
     		foreach ($settings as $key => $value) {
     			if($key != 'create_course'){
-    				if($course_creation[$i]['visibility']==0){
+    				if(!empty($course_creation[$i]) && $course_creation[$i]['visibility']==0){
     					//unset($settings[$key]);
     					$settings[$key]['hide'] = 1;
     					//unset($settings[$key]);
@@ -309,7 +312,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     					if(!empty($course_creation[$i]['fields'][$j]['default'])){
 							$settings[$key]['fields'][$j]['default'] = $course_creation[$i]['fields'][$j]['default'];
 						}
-    					if($course_creation[$i]['fields'][$j]['visibility']==0 && $course_creation[$i]['fields'][$j]['field'] == $settings[$key]['fields'][$j]['id']){
+    					if(!empty($course_creation[$i]) && !empty($course_creation[$i]['fields'][$j]) && $course_creation[$i]['fields'][$j]['visibility']==0 && $course_creation[$i]['fields'][$j]['field'] == $settings[$key]['fields'][$j]['id']){
     						if($settings[$key]['fields'][$j]['type']!='button'){
     							//print($j.'#');print_r($field);
 
@@ -320,7 +323,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     							
     						}
     					}
-    					if($course_creation[$i]['fields'][$j]['required']==1 && $course_creation[$i]['fields'][$j]['field'] == $settings[$key]['fields'][$j]['id']){
+    					if(!empty($course_creation[$i]) && !empty($course_creation[$i]['fields'][$j]) && !empty($course_creation[$i]['fields'][$j]['required'])&&$course_creation[$i]['fields'][$j]['required']==1 && $course_creation[$i]['fields'][$j]['field'] == $settings[$key]['fields'][$j]['id']){
     						if($settings[$key]['fields'][$j]['type']!='button'){
     							//print($j.'#');print_r($field);
 
@@ -350,7 +353,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 	    	foreach($this->custom_section as $section){
 	    		if(!empty($section->title)){
 		    		
-			        $custom_slug = ($permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug;
+			        $custom_slug = isset($permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug;
 			        ?>
 			        <tr>
 			            <th><label><?php _e($section->title,'wplms-ccn'); ?></label></th>
@@ -422,7 +425,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 			if(!empty($permalinks) && $bp->unfiltered_uri[0] == trim($permalinks['course_base'],'/') || $bp->unfiltered_uri[0] == BP_COURSE_SLUG){
 					
 				foreach($this->custom_section as $section){
-					$section_slug = ((!empty($permalinks) && $permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug);
+					$section_slug = ((!empty($permalinks) && !empty($permalinks[$section->slug.'_slug']))?$permalinks[$section->slug.'_slug']:$section->slug);
 					$section_slug = str_replace('/','',$section_slug);
 					
 				    if( get_query_var( $section_slug )){ 
@@ -469,7 +472,11 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 	    	if(empty($this->custom_section))
     			return $settings;
 	    	$fields = $settings['course_settings']['fields'];
-    		$post_id = $_GET['action'];
+	    	$post_id = '';
+	    	if(!empty($_GET['action'])){
+	    		$post_id = $_GET['action'];
+	    	}
+    		
 	    	foreach($this->custom_section as $section){
 	    		$courses=explode(',',$section->courses);
 	    		if((isset($section->courses) && in_array($post_id,$courses)) ||(isset($section->courses) && $section->all_courses=='1')){
@@ -555,7 +562,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     			$courses=explode(',',$section->courses);
     			$check=$this->check_visibility($section->visibility);
     			if(((isset($section->courses) && in_array($course_id,$courses))  ||  $section->all_courses=='1') && $check){
-    					$section_slug = ($permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug;
+    					$section_slug = !empty($permalinks[$section->slug.'_slug'])?$permalinks[$section->slug.'_slug']:$section->slug;
 				    	$nav[$section->slug] = array(
 				                    'id' => $section->slug,
 				                    'label'=>$section->title,
