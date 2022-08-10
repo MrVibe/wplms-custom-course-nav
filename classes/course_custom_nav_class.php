@@ -200,7 +200,7 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
                         $key = $value['value'];
                         $value = $value['label'];
                     }
-                    echo '<input type="radio" class="switch-input post_field '.$field['id'].'" name="default_'.$field['id'].'" data-type="checkbox" value="'.$key.'" id="default_'.$field['id'].$key.'" ';checked($field['value'],$key); echo '>';
+                    echo '<input type="radio" class="switch-input post_field '.$field['id'].'" name="default_'.$field['id'].'" data-type="checkbox" value="'.$key.'" id="default_'.$field['id'].$key.'" ';(!empty($field['value'])?checked($field['value'],$key):''); echo '>';
                        echo '<label for="default_'.$field['id'].$key.'">'.$value.'</label>';
                 }
                 break;
@@ -263,13 +263,13 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
                         echo '<input type="hidden" name="'.$setting['name'].'" value="1"/>';
                     break;
                     case 'existing_custom_section':
+                        $json = array();
                         if(empty($this->custom_sections)){
                             echo '<div id="message" class="error"><p>'.__('No sections found. Add a new section.','wplms-ccn').'</p></div><br /><ul id="course_custom_sections"></ul>';
                         }else{
                             echo '<ul id="course_custom_sections">';
                             foreach($this->custom_sections as $section){
                                 if(!empty($section->courses)){
-                                    $json = array();
                                     $courses_json = explode(',',$section->courses);
                                     foreach($courses_json as $course_id){
                                         $json[] = array('id'=>$course_id,'text'=>get_the_title($course_id));
