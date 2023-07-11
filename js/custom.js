@@ -95,7 +95,7 @@
         var custom_sections = [];
         $('#course_custom_sections>li').each(function(){
             var $this = $(this);
-            var data = {title: $this.find('h4 strong').text(),'slug':$this.find('.custom_course_section_slug').val(),'description': $this.find('h4 span').text(), 'courses':$this.find('.custom_section_courses').val(),'all_courses':$this.find('.custom_section_all_courses').val(),'visibility':$this.find('.custom_section_visibility').val()};
+            var data = {title: $this.find('h4 strong').text(),'slug':$this.find('.custom_course_section_slug').val(),'description': $this.find('.custom_section_description').val(), 'courses':$this.find('.custom_section_courses').val(),'all_courses':$this.find('.custom_section_all_courses').val(),'visibility':$this.find('.custom_section_visibility').val()};
             custom_sections.push(data);
         });
         $('#save_custom_sections').text(wplms_course_custom_nav_js.saving);

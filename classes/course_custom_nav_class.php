@@ -49,7 +49,7 @@ if(!class_exists('WPLMS_Course_Custom_Nav_Plugin_Class'))
                 wp_enqueue_style('customselect2',VIBE_PLUGIN_URL.'/vibe-customtypes/metaboxes/css/select2.min.css');
             }
             
-            wp_enqueue_script('wplms_course_custom_nav_js',plugins_url('../js/custom.js',__FILE__),array('jquery','jquery-ui-sortable'));
+            wp_enqueue_script('wplms_course_custom_nav_js',plugins_url('../js/custom.js',__FILE__),array('jquery','jquery-ui-sortable'),rand(0,999999));
             $translation_array=array(
                 'permalinks_save_notice' => sprintf(_x('Please re-save permalinks, %s link %s','notice shown to users on creating/editing new sections','wplms-ccn'),'<a href="'.admin_url('options-permalink.php').'">','</a>'),
                 'saving'=> _x('Saving...','saving text in save section button','wplms-ccn'),
