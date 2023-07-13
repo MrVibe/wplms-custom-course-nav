@@ -453,7 +453,8 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 				$post_id = $_GET['post'];
 			}
 	    	foreach($this->custom_section as $section){
-	    		$courses=explode(',',$section->courses);
+
+	    		
 	    		if((isset($section->courses) && !empty($post_id) && in_array($post_id,$courses)) ||(isset($section->all_courses) && $section->all_courses=='1')){
 	    			$id='vibe_'.str_replace('-', '_', $section->slug);
 	    			$settings[$id]=array(
@@ -478,20 +479,23 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 	    	}
     		
 	    	foreach($this->custom_section as $section){
-	    		$courses=explode(',',$section->courses);
-	    		if((isset($section->courses) && in_array($post_id,$courses)) ||(isset($section->courses) && $section->all_courses=='1')){
-	    			$id='vibe_'.str_replace('-', '_', $section->slug);
-	    			 $arr=array(array(
-				        'label' => $section->title, // <label>
-				        'desc'  => $section->description, // description
-				        'id'  => $id, // field id and name
-				        'type'  => 'editor', // type of field
-				        'std'   => '',
-				        'from' => 'meta',
-				       	));
-					 array_splice($fields, (count($fields)-2), 0,$arr );
-					 $settings['course_settings']['fields'] = $fields;
+	    		if(isset($section->courses)){
+	    			$courses=explode(',',$section->courses);
+		    		if( in_array($post_id,$courses) || (isset($section->courses) && $section->all_courses=='1')){
+		    			$id='vibe_'.str_replace('-', '_', $section->slug);
+		    			 $arr=array(array(
+					        'label' => $section->title, // <label>
+					        'desc'  => $section->description, // description
+					        'id'  => $id, // field id and name
+					        'type'  => 'editor', // type of field
+					        'std'   => '',
+					        'from' => 'meta',
+					       	));
+						 array_splice($fields, (count($fields)-2), 0,$arr );
+						 $settings['course_settings']['fields'] = $fields;
+		    		}
 	    		}
+	    		
 	    	}
 	    	return $settings;
 	    }
