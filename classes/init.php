@@ -85,12 +85,14 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 
     	function save_4_0_fields_default($id,$args){
     		if(function_exists('get_wplms_create_course_tabs')){
-            
-	    		foreach($this->course_creation[0]['fields'] as  $value){
-	    			if($value['visibility']=='0' && !empty($value['default']) && get_post_type($id)=='course'){
-	    				update_post_meta($id,$value['field'],$value['default']);
-	    			}
-	    		}
+            	if(!empty($this->course_creation[0]) && !empty($this->course_creation[0]['fields'])){
+            		foreach($this->course_creation[0]['fields'] as  $value){
+		    			if($value['visibility']=='0' && !empty($value['default']) && get_post_type($id)=='course'){
+		    				update_post_meta($id,$value['field'],$value['default']);
+		    			}
+		    		}
+            	}
+	    		
     		}
     	}
 
