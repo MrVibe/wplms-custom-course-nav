@@ -216,8 +216,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     	function save_course_settings_defaults_frontend($post_id){
     		if(empty($this->course_creation) || !class_exists('WPLMS_Front_End_Fields'))
     			return;
-    		if(current_user_can('manage_options'))
-    			return;
+  
     		 if(function_exists('get_wplms_create_course_tabs')){
                 $settings = get_wplms_create_course_tabs();
             }else{
@@ -236,8 +235,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     	function save_course_pricng_defaults_frontend($post_id){
     		if(empty($this->course_creation) || !class_exists('WPLMS_Front_End_Fields'))
     			return;
-    		if(current_user_can('manage_options'))
-    			return;
+    	
     		if(function_exists('get_wplms_create_course_tabs')){
                 $settings = get_wplms_create_course_tabs();
             }else{
@@ -270,7 +268,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     	function custom_course_creation_settings($settings){
     		if(empty($this->course_creation))
     			return $settings;
-    		if(!empty($_GET['page']) && $_GET['page']=='wplms-course-custom-nav' || current_user_can('manage_options'))
+    		if(!empty($_GET['page']) && $_GET['page']=='wplms-course-custom-nav')
     			return $settings;
     		foreach($this->course_creation as $cc_key => $cc_value){
     			foreach($cc_value['fields'] as $f_key => $f_value){
@@ -291,10 +289,9 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
     	function course_creation_wplms_course_creation_tabs($settings,$course_id=null,$user_id=null){
     		if(empty($this->course_creation))
     			return $settings;
-    		if(!empty($_GET['page']) && $_GET['page']=='wplms-course-custom-nav' || current_user_can(' manage_options'))
+    		if(!empty($_GET['page']) && $_GET['page']=='wplms-course-custom-nav' )
     			return $settings;
-    		if(!empty($user_id) && user_can($user_id,'manage_options')) 
-    			return $settings;
+    		
     		$i=0;
     		$course_creation = $this->course_creation;
     		$section_keys  = $fields_keys = [];
@@ -598,8 +595,14 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 					break;
 				}
 			}
-			$courses=explode(',',$section->courses);
-			$check=$this->check_visibility($section->visibility);
+			$courses=[];
+			if(!empty($section->courses)){
+				$courses=explode(',',$section->courses);
+			}
+			$check=0;
+			if(!empty($this->check_visibility($section->visibility))){
+				$check=$this->check_visibility($section->visibility);
+			}
 			if( !empty($section) && ((isset($section->courses) && in_array($course_id,$courses))  ||  $section->all_courses=='1') && $check && $action == $section->slug){
 				$content=get_post_meta(get_the_ID(),'vibe_'.str_replace('-','_',$section->slug),true);
 	    		echo  apply_filters('the_content',$content);
