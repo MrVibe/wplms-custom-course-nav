@@ -208,7 +208,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 				 $content=get_post_meta($post->ID,'vibe_'.str_replace('-','_',$section->slug),true);
 				 if(!empty($content) || $content != ''){
 					echo '<div id="course-'.$section_slug.'"><h3 class="heading"><span>'.$section->title.'</span></h3></div>';
-	    			echo  apply_filters('the_content',$content);
+	    			echo  do_shortcode($content);
 				}
 			}
 		}
@@ -454,7 +454,7 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 	    	foreach($this->custom_section as $section){
 
 	    		
-	    		if((isset($section->courses) && !empty($post_id) && in_array($post_id,$courses)) ||(isset($section->all_courses) && $section->all_courses=='1')){
+	    		if((!empty($section->courses) && is_array($section->courses) && !empty($post_id) && in_array($post_id,$section->courses)) ||(isset($section->all_courses) && $section->all_courses=='1')){
 	    			$id='vibe_'.str_replace('-', '_', $section->slug);
 	    			$settings[$id]=array(
 					'label'	=> $section->title,
@@ -600,12 +600,12 @@ if(!class_exists('WPLMS_Course_Custom_Sections'))
 				$courses=explode(',',$section->courses);
 			}
 			$check=0;
-			if(!empty($this->check_visibility($section->visibility))){
+			if(!empty($section->visibility) && !empty($this->check_visibility($section->visibility))){
 				$check=$this->check_visibility($section->visibility);
 			}
 			if( !empty($section) && ((isset($section->courses) && in_array($course_id,$courses))  ||  $section->all_courses=='1') && $check && $action == $section->slug){
 				$content=get_post_meta(get_the_ID(),'vibe_'.str_replace('-','_',$section->slug),true);
-	    		echo  apply_filters('the_content',$content);
+	    		echo  do_shortcode($content);
     		}
     	}	
 		
